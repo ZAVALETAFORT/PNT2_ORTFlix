@@ -31,12 +31,21 @@ export default function RegisterPage() {
     setExito("");
 
     // Validación simple
-    if (!formulario.name.trim() || !formulario.email.trim() || !formulario.password) {
+    if (
+      !formulario.name.trim() ||
+      !formulario.email.trim() ||
+      !formulario.password
+    ) {
       setError("Todos los campos son obligatorios.");
       return;
     }
     if (formulario.password.length < 6) {
       setError("La contraseña debe tener al menos 6 caracteres.");
+      return;
+    }
+    const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailValido.test(formulario.email.trim())) {
+      setError("Ingresá un email válido.");
       return;
     }
 
@@ -53,10 +62,15 @@ export default function RegisterPage() {
         }),
       });
 
-      const data = await response.json();
+      // Si el servidor no responde JSON (por ejemplo un 404 en HTML), seguimos con un objeto vacío
+      const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        setError(data.message || "No se pudo crear la cuenta.");
+        if (response.status === 409) {
+          setError("Ese email ya está registrado.");
+        } else {
+          setError(data.message || "No se pudo crear la cuenta.");
+        }
         return;
       }
 
@@ -73,7 +87,7 @@ export default function RegisterPage() {
     <section className={estilos.section}>
       <h1>Crear cuenta</h1>
 
-      <form className={estilos.form} onSubmit={handleSubmit}>
+      <form className={estilos.form} onSubmit={handleSubmit} noValidate>
         <label className={estilos.label}>
           Nombre
           <input
@@ -107,7 +121,11 @@ export default function RegisterPage() {
           />
         </label>
 
-        <button className={estilos.boton} type="submit" disabled={cargando || exito !== ""}>
+        <button
+          className={estilos.boton}
+          type="submit"
+          disabled={cargando || exito !== ""}
+        >
           {cargando ? "Creando cuenta..." : "Registrarme"}
         </button>
       </form>
