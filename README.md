@@ -265,100 +265,92 @@ El objetivo es mantener trazabilidad sobre:
 
 ## 📊 Estado del desarrollo
 
-El proyecto se desarrolla de forma incremental. Las funcionalidades se marcan como completadas una vez implementadas, probadas e integradas en `develop`.
+El proyecto se desarrolla de forma incremental mediante GitHub Issues, ramas individuales y Pull Requests hacia `develop`.
 
 ### ✅ Checklist de avance
 
 **Estructura y configuración**
 
-- [X]  Estructura inicial Next.js.
-- [X]  Configuración del repositorio y ramas Git.
-- [X]  Integración con API de TMDB.
-- [X]  Estructura inicial de base de datos SQLite.
-- [ ]  Integración completa del backend con SQLite.
+- [X]  Proyecto Next.js y React.
+- [X]  Repositorio GitHub y ramas de trabajo.
+- [X]  Integración con TMDB.
+- [X]  Estructura inicial SQLite.
+- [ ]  API REST propia y persistencia completa.
+- [ ]  Integración y pruebas generales.
 
 **Autenticación y usuarios**
 
-- [X]  Login de usuarios.
 - [X]  Registro de usuarios.
-- [X]  Logout (cierre de sesión).
-- [X]  Validaciones del formulario de registro.
-- [X]  Integración del registro con el backend.
-- [ ]  Implementación del sistema de roles.
-- [ ]  Asignación de roles a los usuarios.
-- [ ]  Control de acceso según el rol.
-- [ ]  Protección de rutas y operaciones según permisos.
+- [X]  Login y Logout.
+- [X]  Validaciones de formularios.
+- [X]  Integración inicial con backend externo.
+- [ ]  Sistema de roles (Administrador y Cliente).
+- [ ]  Protección de rutas según permisos.
+- [ ]  Integración de autenticación con SQLite.
 
-**Roles previstos**
+**Cartelera y películas**
 
-- **Administrador:** administración de empleados, funciones y reservas.
-- **Empleado:** gestión operativa de funciones y reservas.
-- **Cliente:** consulta de cartelera, selección de funciones y reserva de asientos.
+- [X]  Consulta de películas mediante TMDB.
+- [X]  Visualización de tarjetas.
+- [X]  Buscador de películas.
+- [ ]  Detalle de película.
+- [ ]  Visualización de funciones disponibles.
 
-**Cartelera de películas**
+**Gestión del cine**
 
-- [X]  Consulta de películas mediante TMDB API.
-- [X]  Visualización de películas mediante tarjetas.
-- [X]  Buscador de películas por título.
-- [ ]  Navegación al detalle de cada película.
-- [ ]  Visualización de información detallada de la película.
-
-**Gestión de cine**
-
-- [ ]  ABM Favoritos.
-- [ ]  ABM Funciones.
-- [ ]  ABM Reservas.
+- [ ]  ABM de funciones.
+- [ ]  ABM de reservas.
 - [ ]  Selección de asientos.
-- [ ]  Validación de disponibilidad de asientos.
-- [ ]  Impedir reservar un asiento previamente ocupado.
+- [ ]  Prevención de reservas duplicadas.
+- [ ]  ABM de favoritos.
+- [ ]  ABM de empleados.
+- [ ]  Incorporación del rol Empleado.
 
-**ABM de empleados**
+---
 
-- [ ]  Alta de empleados.
-- [ ]  Baja de empleados.
-- [ ]  Modificación de datos de empleados.
-- [ ]  Listado y consulta de empleados.
-- [ ]  Asignación y modificación de roles.
-- [ ]  Restringir la administración de empleados al rol Administrador.
+### 👨‍💻 Distribución de tareas
+
+
+| Integrante          | Issue | Responsabilidad                   | Estado         |
+| --------------------- | ------- | ----------------------------------- | ---------------- |
+| Leandro Colombo     | #7    | Base de datos SQLite y API REST   | En desarrollo  |
+| Juan Manuel Pereyra | #8    | Autenticación y sistema de roles | En desarrollo  |
+| Nicolás Canchero   | #9    | Detalle de película              | En desarrollo  |
+| Santiago Cortina    | #10   | ABM de funciones                  | En desarrollo  |
+| Fernando Zavaleta   | #11   | Reservas y selección de asientos | En desarrollo  |
+
+**Nota:** el ABM de favoritos y el ABM de empleados permanecen pendientes de asignación.
 
 ---
 
 ### 🎯 Entregable para la próxima clase
 
-**Objetivo:** implementar el flujo básico de selección de película, función y reserva de asientos, tomando como referencia la experiencia de usuario de Cinemark.
+**Objetivo:** implementar el flujo de selección de películas y reserva de asientos, tomando como referencia Cinemark.
 
-#### 🎬 1. Detalle de película
-
-- [ ]  Acceder al detalle desde la cartelera.
-- [ ]  Mostrar información de la película seleccionada.
-
-#### 🎟️ 2. Selección de función
-
-- [ ]  Seleccionar película.
-- [ ]  Seleccionar día.
-- [ ]  Seleccionar horario.
-- [ ]  Seleccionar formato de proyección (2D, 3D, etc.).
-- [ ]  Mostrar las funciones disponibles según la selección.
-
-#### 💺 3. Reserva de asientos
-
-- [ ]  Mostrar los asientos disponibles y ocupados.
-- [ ]  Permitir seleccionar uno o varios asientos disponibles.
-- [ ]  Impedir seleccionar asientos previamente reservados.
-- [ ]  Registrar la reserva asociada a la función seleccionada.
-- [ ]  Evitar reservas duplicadas del mismo asiento para una misma función.
-
-#### 🧪 4. Pruebas funcionales
-
-- [ ]  Verificar navegación desde la cartelera al detalle.
-- [ ]  Verificar selección de día, horario y formato.
-- [ ]  Verificar selección de asientos disponibles.
-- [ ]  Verificar que un asiento reservado no pueda volver a reservarse para la misma función.
-- [ ]  Verificar que un mismo asiento pueda reservarse en funciones diferentes.
-- [ ]  Verificar persistencia de las reservas.
+- [ ]  Acceder al detalle de una película.
+- [ ]  Seleccionar función, día y horario.
+- [ ]  Seleccionar formato (2D, 3D o 4D).
+- [ ]  Visualizar asientos disponibles y ocupados.
+- [ ]  Seleccionar y confirmar una reserva.
+- [ ]  Impedir reservar dos veces el mismo asiento para una función.
+- [ ]  Consultar las reservas realizadas.
 
 ---
 
-**Criterio de finalización:** cada funcionalidad debe estar implementada, probada funcionalmente e integrada en la rama `develop`.
+### 🔄 Estado de integración
 
-**Referencia visual:** Cinemark, para el flujo de selección de funciones y asientos.
+
+| Funcionalidad             | Estado                               |
+| --------------------------- | -------------------------------------- |
+| Login, Registro y Logout  | ✅ Integrado                         |
+| Cartelera TMDB y buscador | ✅ Integrado, con ajustes pendientes |
+| Estructura inicial SQLite | ✅ Integrado                         |
+| Detalle de película      | ⏳ Pendiente                         |
+| Sistema de roles          | ⏳ Pendiente                         |
+| ABM de funciones          | ⏳ Pendiente                         |
+| Reservas y asientos       | 🔄 PR #12 abierto                    |
+| API REST propia           | ⏳ Pendiente                         |
+| ABM Favoritos y Empleados | ⏳ Pendiente                         |
+
+
+**Criterio de finalización:** cada funcionalidad debe estar implementada, probada y fusionada en `develop`
