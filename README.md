@@ -308,20 +308,6 @@ El proyecto se desarrolla de forma incremental mediante GitHub Issues, ramas ind
 
 ---
 
-### 👨‍💻 Distribución de tareas
-
-
-| Integrante          | Issue | Responsabilidad                   | Estado         |
-| --------------------- | ------- | ----------------------------------- | ---------------- |
-| Leandro Colombo     | #7    | Base de datos SQLite y API REST   | En desarrollo  |
-| Juan Manuel Pereyra | #8    | Autenticación y sistema de roles | En desarrollo  |
-| Nicolás Canchero   | #9    | Detalle de película              | En desarrollo  |
-| Santiago Cortina    | #10   | ABM de funciones                  | En desarrollo  |
-| Fernando Zavaleta   | #11   | Reservas y selección de asientos | En desarrollo  |
-
-**Nota:** el ABM de favoritos y el ABM de empleados permanecen pendientes de asignación.
-
----
 
 ### 🎯 Entregable para la próxima clase
 
@@ -348,7 +334,7 @@ El proyecto se desarrolla de forma incremental mediante GitHub Issues, ramas ind
 | Detalle de película      | ⏳ Pendiente                         |
 | Sistema de roles          | ⏳ Pendiente                         |
 | ABM de funciones          | ⏳ Pendiente                         |
-| Reservas y asientos       | 🔄 PR #12 abierto                    |
+| Reservas y asientos       | ⏳ Pendiente                         |
 | API REST propia           | ⏳ Pendiente                         |
 | ABM Favoritos y Empleados | ⏳ Pendiente                         |
 
