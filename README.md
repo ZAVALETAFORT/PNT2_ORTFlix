@@ -1,4 +1,3 @@
-
 ## 🎬 ORTFlix
 
 ### Sistema de cartelera y reservas de cine
@@ -7,15 +6,16 @@
 
 **ORTFlix** es una aplicación web de cartelera cinematográfica desarrollada con **React y Next.js**, que permite explorar películas, descubrir estrenos, gestionar favoritos, consultar funciones y realizar reservas.
 
----
-
 ## 👥 Equipo de desarrollo
+
+**Carrera de Sistemas – ORT**
 
 
 | Integrante                              | GitHub              |
 | ----------------------------------------- | --------------------- |
 | Colombo Leandro Nahuel                  | `LeandroColombo111` |
 | Cortina Santiago Manuel                 | `santicortina-97`   |
+| Pereyra Juan Manuel                     | `JuanMaPereyraDev`  |
 | Ruhl Canchero Nicolás                  | `NicoCanchero`      |
 | Zavaleta Villavicencio Moisés Fernando | `ZAVALETAFORT`      |
 
@@ -95,8 +95,6 @@ El sistema incorpora registro e inicio de sesión mediante una API REST, permiti
 - Redirección automática después del registro.
 - Persistencia de datos de sesión mediante `localStorage`.
 
-
-
 ### 3. ❤️ ABM de Favoritos
 
 **Guardá las películas que no querés perderte.**
@@ -126,7 +124,6 @@ Este módulo permitirá administrar las funciones disponibles para cada películ
 | **Consulta**      | Visualizar las funciones disponibles  |
 
 Las funciones estarán asociadas a películas identificadas mediante sus respectivos IDs.
-
 
 ### 5. 📅 ABM de Reservas
 
@@ -265,23 +262,103 @@ El objetivo es mantener trazabilidad sobre:
 
 ---
 
+
 ## 📊 Estado del desarrollo
 
 El proyecto se desarrolla de forma incremental. Las funcionalidades se marcan como completadas una vez implementadas, probadas e integradas en `develop`.
 
 ### ✅ Checklist de avance
 
+**Estructura y configuración**
+
 - [X]  Estructura inicial Next.js.
 - [X]  Configuración del repositorio y ramas Git.
+- [X]  Integración con API de TMDB.
+- [X]  Estructura inicial de base de datos SQLite.
+- [ ]  Integración completa del backend con SQLite.
+
+**Autenticación y usuarios**
+
 - [X]  Login de usuarios.
 - [X]  Registro de usuarios.
 - [X]  Logout (cierre de sesión).
 - [X]  Validaciones del formulario de registro.
 - [X]  Integración del registro con el backend.
-- [ ]  Cartelera de películas mediante TMDB API.
+- [ ]  Implementación del sistema de roles.
+- [ ]  Asignación de roles a los usuarios.
+- [ ]  Control de acceso según el rol.
+- [ ]  Protección de rutas y operaciones según permisos.
+
+**Roles previstos**
+
+- **Administrador:** administración de empleados, funciones y reservas.
+- **Empleado:** gestión operativa de funciones y reservas.
+- **Cliente:** consulta de cartelera, selección de funciones y reserva de asientos.
+
+**Cartelera de películas**
+
+- [X]  Consulta de películas mediante TMDB API.
+- [X]  Visualización de películas mediante tarjetas.
+- [X]  Buscador de películas por título.
+- [ ]  Navegación al detalle de cada película.
+- [ ]  Visualización de información detallada de la película.
+
+**Gestión de cine**
+
 - [ ]  ABM Favoritos.
 - [ ]  ABM Funciones.
 - [ ]  ABM Reservas.
-- [ ]  Persistencia propia de datos.
+- [ ]  Selección de asientos.
+- [ ]  Validación de disponibilidad de asientos.
+- [ ]  Impedir reservar un asiento previamente ocupado.
 
-**Criterio de finalización:** cada módulo debe estar implementado, probado funcionalmente e integrado en la rama `develop`.
+**ABM de empleados**
+
+- [ ]  Alta de empleados.
+- [ ]  Baja de empleados.
+- [ ]  Modificación de datos de empleados.
+- [ ]  Listado y consulta de empleados.
+- [ ]  Asignación y modificación de roles.
+- [ ]  Restringir la administración de empleados al rol Administrador.
+
+---
+
+### 🎯 Entregable para la próxima clase
+
+**Objetivo:** implementar el flujo básico de selección de película, función y reserva de asientos, tomando como referencia la experiencia de usuario de Cinemark.
+
+#### 🎬 1. Detalle de película
+
+- [ ]  Acceder al detalle desde la cartelera.
+- [ ]  Mostrar información de la película seleccionada.
+
+#### 🎟️ 2. Selección de función
+
+- [ ]  Seleccionar película.
+- [ ]  Seleccionar día.
+- [ ]  Seleccionar horario.
+- [ ]  Seleccionar formato de proyección (2D, 3D, etc.).
+- [ ]  Mostrar las funciones disponibles según la selección.
+
+#### 💺 3. Reserva de asientos
+
+- [ ]  Mostrar los asientos disponibles y ocupados.
+- [ ]  Permitir seleccionar uno o varios asientos disponibles.
+- [ ]  Impedir seleccionar asientos previamente reservados.
+- [ ]  Registrar la reserva asociada a la función seleccionada.
+- [ ]  Evitar reservas duplicadas del mismo asiento para una misma función.
+
+#### 🧪 4. Pruebas funcionales
+
+- [ ]  Verificar navegación desde la cartelera al detalle.
+- [ ]  Verificar selección de día, horario y formato.
+- [ ]  Verificar selección de asientos disponibles.
+- [ ]  Verificar que un asiento reservado no pueda volver a reservarse para la misma función.
+- [ ]  Verificar que un mismo asiento pueda reservarse en funciones diferentes.
+- [ ]  Verificar persistencia de las reservas.
+
+---
+
+**Criterio de finalización:** cada funcionalidad debe estar implementada, probada funcionalmente e integrada en la rama `develop`.
+
+**Referencia visual:** Cinemark, para el flujo de selección de funciones y asientos.
