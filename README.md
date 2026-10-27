@@ -1,4 +1,3 @@
-
 ## 🎬 ORTFlix
 
 ### Sistema de cartelera y reservas de cine
@@ -7,15 +6,16 @@
 
 **ORTFlix** es una aplicación web de cartelera cinematográfica desarrollada con **React y Next.js**, que permite explorar películas, descubrir estrenos, gestionar favoritos, consultar funciones y realizar reservas.
 
----
-
 ## 👥 Equipo de desarrollo
+
+**Carrera de Sistemas – ORT**
 
 
 | Integrante                              | GitHub              |
 | ----------------------------------------- | --------------------- |
 | Colombo Leandro Nahuel                  | `LeandroColombo111` |
 | Cortina Santiago Manuel                 | `santicortina-97`   |
+| Pereyra Juan Manuel                     | `JuanMaPereyraDev`  |
 | Ruhl Canchero Nicolás                  | `NicoCanchero`      |
 | Zavaleta Villavicencio Moisés Fernando | `ZAVALETAFORT`      |
 
@@ -95,8 +95,6 @@ El sistema incorpora registro e inicio de sesión mediante una API REST, permiti
 - Redirección automática después del registro.
 - Persistencia de datos de sesión mediante `localStorage`.
 
-
-
 ### 3. ❤️ ABM de Favoritos
 
 **Guardá las películas que no querés perderte.**
@@ -126,7 +124,6 @@ Este módulo permitirá administrar las funciones disponibles para cada películ
 | **Consulta**      | Visualizar las funciones disponibles  |
 
 Las funciones estarán asociadas a películas identificadas mediante sus respectivos IDs.
-
 
 ### 5. 📅 ABM de Reservas
 
@@ -265,23 +262,81 @@ El objetivo es mantener trazabilidad sobre:
 
 ---
 
+
 ## 📊 Estado del desarrollo
 
-El proyecto se desarrolla de forma incremental. Las funcionalidades se marcan como completadas una vez implementadas, probadas e integradas en `develop`.
+El proyecto se desarrolla de forma incremental mediante GitHub Issues, ramas individuales y Pull Requests hacia `develop`.
 
 ### ✅ Checklist de avance
 
-- [X]  Estructura inicial Next.js.
-- [X]  Configuración del repositorio y ramas Git.
-- [X]  Login de usuarios.
-- [X]  Registro de usuarios.
-- [X]  Logout (cierre de sesión).
-- [X]  Validaciones del formulario de registro.
-- [X]  Integración del registro con el backend.
-- [ ]  Cartelera de películas mediante TMDB API.
-- [ ]  ABM Favoritos.
-- [ ]  ABM Funciones.
-- [ ]  ABM Reservas.
-- [ ]  Persistencia propia de datos.
+**Estructura y configuración**
 
-**Criterio de finalización:** cada módulo debe estar implementado, probado funcionalmente e integrado en la rama `develop`.
+- [X]  Proyecto Next.js y React.
+- [X]  Repositorio GitHub y ramas de trabajo.
+- [X]  Integración con TMDB.
+- [X]  Estructura inicial SQLite.
+- [ ]  API REST propia y persistencia completa.
+- [ ]  Integración y pruebas generales.
+
+**Autenticación y usuarios**
+
+- [X]  Registro de usuarios.
+- [X]  Login y Logout.
+- [X]  Validaciones de formularios.
+- [X]  Integración inicial con backend externo.
+- [ ]  Sistema de roles (Administrador y Cliente).
+- [ ]  Protección de rutas según permisos.
+- [ ]  Integración de autenticación con SQLite.
+
+**Cartelera y películas**
+
+- [X]  Consulta de películas mediante TMDB.
+- [X]  Visualización de tarjetas.
+- [X]  Buscador de películas.
+- [ ]  Detalle de película.
+- [ ]  Visualización de funciones disponibles.
+
+**Gestión del cine**
+
+- [ ]  ABM de funciones.
+- [ ]  ABM de reservas.
+- [ ]  Selección de asientos.
+- [ ]  Prevención de reservas duplicadas.
+- [ ]  ABM de favoritos.
+- [ ]  ABM de empleados.
+- [ ]  Incorporación del rol Empleado.
+
+---
+
+
+### 🎯 Entregable para la próxima clase
+
+**Objetivo:** implementar el flujo de selección de películas y reserva de asientos, tomando como referencia Cinemark.
+
+- [ ]  Acceder al detalle de una película.
+- [ ]  Seleccionar función, día y horario.
+- [ ]  Seleccionar formato (2D, 3D o 4D).
+- [ ]  Visualizar asientos disponibles y ocupados.
+- [ ]  Seleccionar y confirmar una reserva.
+- [ ]  Impedir reservar dos veces el mismo asiento para una función.
+- [ ]  Consultar las reservas realizadas.
+
+---
+
+### 🔄 Estado de integración
+
+
+| Funcionalidad             | Estado                               |
+| --------------------------- | -------------------------------------- |
+| Login, Registro y Logout  | ✅ Integrado                         |
+| Cartelera TMDB y buscador | ✅ Integrado, con ajustes pendientes |
+| Estructura inicial SQLite | ✅ Integrado                         |
+| Detalle de película      | ⏳ Pendiente                         |
+| Sistema de roles          | ⏳ Pendiente                         |
+| ABM de funciones          | ⏳ Pendiente                         |
+| Reservas y asientos       | ⏳ Pendiente                         |
+| API REST propia           | ⏳ Pendiente                         |
+| ABM Favoritos y Empleados | ⏳ Pendiente                         |
+
+
+**Criterio de finalización:** cada funcionalidad debe estar implementada, probada y fusionada en `develop`
