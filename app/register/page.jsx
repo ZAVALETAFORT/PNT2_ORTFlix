@@ -40,23 +40,20 @@ export default function RegisterPage() {
       return;
     }
 
-        const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+       // Validar formato del email
+    const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
     if (!emailValido.test(formulario.email.trim())) {
       setError("Ingresá un email válido.");
       return;
     }
-  
-    if (!emailValido.test(formulario.email.trim())) {
-      setError("Ingresá un email válido.");
-      return;
-    }
+
 
     // Validar contraseña
     if (formulario.password.length < 6) {
       setError("La contraseña debe tener al menos 6 caracteres.");
       return;
     }
-
 
     setCargando(true);
 
@@ -70,12 +67,8 @@ export default function RegisterPage() {
           password: formulario.password,
         }),
       });
-<<<<<<< HEAD
 
       // Si el servidor no responde JSON (por ejemplo un 404 en HTML), seguimos con un objeto vacío
-=======
-      
->>>>>>> origin/develop
       const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
