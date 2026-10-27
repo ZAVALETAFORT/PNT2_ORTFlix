@@ -30,7 +30,7 @@ export default function RegisterPage() {
     setError("");
     setExito("");
 
-    // Validación simple
+    // Validar campos obligatorios
     if (
       !formulario.name.trim() ||
       !formulario.email.trim() ||
@@ -39,15 +39,24 @@ export default function RegisterPage() {
       setError("Todos los campos son obligatorios.");
       return;
     }
-    if (formulario.password.length < 6) {
-      setError("La contraseña debe tener al menos 6 caracteres.");
-      return;
-    }
-    const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailValido.test(formulario.email.trim())) {
       setError("Ingresá un email válido.");
       return;
     }
+  
+    if (!emailValido.test(formulario.email.trim())) {
+      setError("Ingresá un email válido.");
+      return;
+    }
+
+    // Validar contraseña
+    if (formulario.password.length < 6) {
+      setError("La contraseña debe tener al menos 6 caracteres.");
+      return;
+    }
+
 
     setCargando(true);
 
@@ -56,13 +65,17 @@ export default function RegisterPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: formulario.name.trim(),
+          username: formulario.name.trim(),
           email: formulario.email.trim(),
           password: formulario.password,
         }),
       });
+<<<<<<< HEAD
 
       // Si el servidor no responde JSON (por ejemplo un 404 en HTML), seguimos con un objeto vacío
+=======
+      
+>>>>>>> origin/develop
       const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
@@ -76,8 +89,9 @@ export default function RegisterPage() {
 
       setExito("Cuenta creada correctamente. Redirigiendo al login...");
       setTimeout(() => router.push("/login"), 1000);
-    } catch {
-      setError("Error de conexión con el servidor.");
+    } catch (error) {
+      console.error("Error real del registro:", error);
+      setError("Error: " + error.message);
     } finally {
       setCargando(false);
     }
