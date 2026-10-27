@@ -30,7 +30,7 @@ export default function RegisterPage() {
     setError("");
     setExito("");
 
-    // Validación simple
+    // Validar campos obligatorios
     if (
       !formulario.name.trim() ||
       !formulario.email.trim() ||
@@ -39,6 +39,16 @@ export default function RegisterPage() {
       setError("Todos los campos son obligatorios.");
       return;
     }
+
+    // Validar formato del email
+    const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailValido.test(formulario.email.trim())) {
+      setError("Ingresá un email válido.");
+      return;
+    }
+
+    // Validar contraseña
     if (formulario.password.length < 6) {
       setError("La contraseña debe tener al menos 6 caracteres.");
       return;
@@ -56,9 +66,8 @@ export default function RegisterPage() {
           password: formulario.password,
         }),
       });
-
+g
       const data = await response.json().catch(() => ({}));
-      console.log("Registro HTTP:", response.status, data);
 
       if (!response.ok) {
         setError(data.message || "No se pudo crear la cuenta.");
@@ -68,9 +77,9 @@ export default function RegisterPage() {
       setExito("Cuenta creada correctamente. Redirigiendo al login...");
       setTimeout(() => router.push("/login"), 1000);
     } catch (error) {
-  console.error("Error real del registro:", error);
-  setError("Error: " + error.message);
-} finally {
+      console.error("Error real del registro:", error);
+      setError("Error: " + error.message);
+    } finally {
       setCargando(false);
     }
   }
@@ -79,7 +88,7 @@ export default function RegisterPage() {
     <section className={estilos.section}>
       <h1>Crear cuenta</h1>
 
-      <form className={estilos.form} onSubmit={handleSubmit}>
+      <form className={estilos.form} onSubmit={handleSubmit} noValidate>
         <label className={estilos.label}>
           Nombre
           <input
