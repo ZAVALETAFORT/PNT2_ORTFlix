@@ -1,4 +1,4 @@
-import './peliculas.css';
+import './pelicula.css';
 import PeliculaList from '@/app/components/pelicula/PeliculaList';
 
 export default function PeliculasPage() {
