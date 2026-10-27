@@ -66,7 +66,7 @@ export default function RegisterPage() {
           password: formulario.password,
         }),
       });
-g
+      
       const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
