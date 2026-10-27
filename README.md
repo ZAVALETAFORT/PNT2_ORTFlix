@@ -215,6 +215,90 @@ Usuarios de prueba (ya registrados en el backend del profesor): `admin@ortflix.c
 
 ---
 
+## 🗄️ Base de datos y API
+
+La base es **SQLite en un archivo** (`database/ortflix.db`, ignorado por git). Se usa con el módulo integrado `node:sqlite` de Node (requiere Node 22.5 o superior), así que no hay que instalar nada extra.
+
+| Archivo | Para qué sirve |
+| --- | --- |
+| `database/schema.sql` | Las tablas: `usuarios`, `salas`, `funciones`, `reservas`, `reserva_asientos` y `favoritos` |
+| `database/initDb.js` | Borra y recrea las tablas y carga los datos de `src/data/mock.js` |
+| `lib/db.js` | Conexión a la base, la usan todos los endpoints |
+| `lib/auth.js`, `lib/api.js`, `lib/validar.js` | Funciones de ayuda de los endpoints |
+
+Los endpoints son Route Handlers de Next en `app/api/`.
+
+### Inicializar la base
+
+```bash
+npm run db:init
+```
+
+Borra y recrea las tablas y carga los mismos datos que `src/data/mock.js` (2 usuarios, 2 salas, 4 funciones, 2 reservas). Se puede correr de nuevo cuando se quiera volver al estado inicial. Después, `npm run dev` y la API queda en `http://localhost:3000/api/...`.
+
+`NEXT_PUBLIC_API_URL` tiene que seguir apuntando al **backend del profesor** (no a `localhost:3000`): ahí se hacen el registro y el login. Opcional: `AUTH_API_URL` en `.env` para cambiar el backend con el que nuestra API valida el token (por defecto es el mismo del profesor).
+
+### Autenticación y errores
+
+- **Login y registro:** los hace el backend del profesor (`POST /api/users/login` y `/register`). El login devuelve `{ message, user: { _id, username, email }, token }`. El token es un JWT que vence a las 2 horas.
+- **Cómo validamos el token:** nuestros endpoints privados leen `Authorization: Bearer <token>` y le preguntan al backend del profesor (`GET /api/users/<_id>`) si el token es válido. Si lo es, buscan al usuario por email en nuestra base y, si no existe, lo crean como `cliente`.
+- **Rol admin:** vive en nuestra base (`usuarios.rol`). `admin@ortflix.com` ya viene como admin con `npm run db:init` y ya está registrado en el backend del profesor. Para hacer admin a otro email: `UPDATE usuarios SET rol = 'admin' WHERE email = '...'`.
+- Sin token, con token inválido o vencido → `401`. Endpoint solo admin con un usuario cliente → `403`.
+- Los errores siempre vienen como `{ "message": "texto en español" }`.
+
+### Usuarios
+
+**GET `/api/users/me`** (token) → `200` `{ "id": 3, "nombre": "Pablo Hinojosa", "email": "pablo.hinojosa@ort.edu.ar", "rol": "cliente" }`. `401` sin token o con token inválido.
+
+### Salas
+
+**GET `/api/salas`** → `[ { "id": 1, "nombre": "Sala 1", "filas": 8, "columnas": 10 }, ... ]`
+
+### Funciones
+
+**GET `/api/funciones`** (filtro opcional `?movieId=1400940`)
+→ `[ { "id": 1, "movieId": 1400940, "titulo": "Clayface", "salaId": 1, "fecha": "2026-10-28", "hora": "20:30", "formato": "3D", "idioma": "Subtitulada", "precio": 9500 }, ... ]`
+
+**GET `/api/funciones/[id]`** → una función. `404` si no existe.
+
+**POST `/api/funciones`** (solo admin) — body:
+
+```json
+{ "movieId": 1255833, "titulo": "Whalefall", "salaId": 1, "fecha": "2026-11-03", "hora": "19:00", "formato": "2D", "idioma": "Castellano", "precio": 8500 }
+```
+
+→ `201` con la función creada. `400` si hay datos inválidos, `409` si ya hay una función en esa sala, fecha y hora.
+
+**PUT `/api/funciones/[id]`** (solo admin) — mismo body que el POST → `200` con la función modificada. `404` si no existe, `409` si choca con otra función (o si se cambia la sala y ya hay reservas).
+
+**DELETE `/api/funciones/[id]`** (solo admin) → `200` `{ "message": "Función eliminada." }`. `409` si tiene reservas confirmadas.
+
+**GET `/api/funciones/[id]/asientos-ocupados`** → `["A1","A2"]` (solo de reservas confirmadas).
+
+### Reservas
+
+**GET `/api/reservas`** (token) → reservas del usuario logueado:
+`[ { "id": 1, "usuarioId": 2, "funcionId": 1, "asientos": ["A1","A2"], "estado": "confirmada", "fechaCreacion": "2026-10-27T10:00:00" } ]`
+
+**POST `/api/reservas`** (token) — body `{ "funcionId": 2, "asientos": ["B1","B2"] }` → `201` con la reserva confirmada. `400` si los asientos no existen en la sala, `404` si la función no existe, `409` si algún asiento ya está ocupado.
+
+**PUT `/api/reservas/[id]`** (token, solo el dueño de la reserva)
+- Cancelar: body `{ "estado": "cancelada" }` → `200`. Los asientos quedan libres, por eso la reserva cancelada devuelve `"asientos": []`.
+- Cambiar de función: body `{ "funcionId": 4, "asientos": ["A1","A2"] }` → `200`.
+- Errores: `403` si la reserva es de otro usuario, `404` si no existe, `409` si ya está cancelada o hay asientos ocupados.
+
+### Ejemplo con curl
+
+```bash
+# login en el backend del profesor (devuelve el token)
+curl -X POST https://backendairbnb-befph8eegzabfudb.eastus2-01.azurewebsites.net/api/users/login -H "Content-Type: application/json" -d '{"email":"TU_EMAIL","password":"TU_PASSWORD"}'
+
+# usar el token en nuestra API
+curl http://localhost:3000/api/reservas -H "Authorization: Bearer <token>"
+```
+
+---
+
 ## ⚙️ Instalación y ejecución
 
 ### Requisitos previos
