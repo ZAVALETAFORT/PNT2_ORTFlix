@@ -160,6 +160,61 @@ La aplicación utiliza **Next.js App Router** para administrar la navegación en
 
 ---
 
+## 📑 Contrato de datos
+
+Todas las respuestas de la API usan **camelCase** y estas formas exactas. Los errores siempre vienen como `{ "message": "texto en español" }`.
+
+### Objetos
+
+```js
+usuario = { id, nombre, email, rol }                 // rol: "admin" | "cliente". Nunca incluye password ni token
+sala    = { id, nombre, filas, columnas }
+funcion = { id, movieId, titulo, salaId, fecha, hora, formato, idioma, precio }
+          // fecha "2026-11-05", hora "20:30", formato "2D" | "3D" | "4D", idioma "Subtitulada" | "Castellano"
+reserva = { id, usuarioId, funcionId, asientos, estado, fechaCreacion }
+          // asientos ["A1","A2"], estado "confirmada" | "cancelada"
+```
+
+`movieId` es el id de la película en TMDB.
+
+### Endpoints
+
+| Método | Ruta | Acceso | Descripción |
+| --- | --- | --- | --- |
+| GET | `/api/users/me` | token | Usuario del token con su rol → `usuario` |
+| GET | `/api/salas` | público | Lista de `sala` |
+| GET | `/api/funciones` | público | Lista de `funcion` (filtro opcional `?movieId=`) |
+| GET | `/api/funciones/[id]` | público | Una `funcion` |
+| POST | `/api/funciones` | admin | Crea una función |
+| PUT | `/api/funciones/[id]` | admin | Modifica una función |
+| DELETE | `/api/funciones/[id]` | admin | Borra una función |
+| GET | `/api/funciones/[id]/asientos-ocupados` | público | `["A1","B4"]` |
+| GET | `/api/reservas` | token | Reservas del usuario logueado |
+| POST | `/api/reservas` | token | Body `{ funcionId, asientos }` |
+| PUT | `/api/reservas/[id]` | token | `{ estado: "cancelada" }` o `{ funcionId, asientos }` |
+
+Los endpoints con token requieren el header `Authorization: Bearer <token>`. El registro y el login **no** son parte de esta API: se hacen contra el backend del profesor (`NEXT_PUBLIC_API_URL`), y el token que devuelve es el que se usa acá.
+
+### Claves de localStorage
+
+| Clave | Contenido |
+| --- | --- |
+| `token` | Token devuelto por el login del backend del profesor (string) |
+| `user` | Usuario que devuelve ese login (`JSON.stringify`): `{ _id, username, email }`. El rol se consulta con `GET /api/users/me` |
+| `userEmail` | Email del usuario logueado (string) |
+
+### Datos de prueba (mock)
+
+Mientras no esté el backend, importar los datos de `src/data/mock.js`:
+
+```js
+import { funciones, salas, reservas, usuarios } from "@/src/data/mock";
+```
+
+Usuarios de prueba (ya registrados en el backend del profesor): `admin@ortflix.com` / `admin123` y `cliente@ortflix.com` / `cliente123`.
+
+---
+
 ## ⚙️ Instalación y ejecución
 
 ### Requisitos previos
