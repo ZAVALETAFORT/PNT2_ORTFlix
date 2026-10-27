@@ -31,7 +31,11 @@ export default function RegisterPage() {
     setExito("");
 
     // Validación simple
-    if (!formulario.name.trim() || !formulario.email.trim() || !formulario.password) {
+    if (
+      !formulario.name.trim() ||
+      !formulario.email.trim() ||
+      !formulario.password
+    ) {
       setError("Todos los campos son obligatorios.");
       return;
     }
@@ -47,13 +51,14 @@ export default function RegisterPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: formulario.name.trim(),
+          username: formulario.name.trim(),
           email: formulario.email.trim(),
           password: formulario.password,
         }),
       });
 
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
+      console.log("Registro HTTP:", response.status, data);
 
       if (!response.ok) {
         setError(data.message || "No se pudo crear la cuenta.");
@@ -62,9 +67,10 @@ export default function RegisterPage() {
 
       setExito("Cuenta creada correctamente. Redirigiendo al login...");
       setTimeout(() => router.push("/login"), 1000);
-    } catch {
-      setError("Error de conexión con el servidor.");
-    } finally {
+    } catch (error) {
+  console.error("Error real del registro:", error);
+  setError("Error: " + error.message);
+} finally {
       setCargando(false);
     }
   }
@@ -107,7 +113,11 @@ export default function RegisterPage() {
           />
         </label>
 
-        <button className={estilos.boton} type="submit" disabled={cargando || exito !== ""}>
+        <button
+          className={estilos.boton}
+          type="submit"
+          disabled={cargando || exito !== ""}
+        >
           {cargando ? "Creando cuenta..." : "Registrarme"}
         </button>
       </form>
