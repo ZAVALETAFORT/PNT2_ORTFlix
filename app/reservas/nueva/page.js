@@ -1,4 +1,3 @@
-
 export const instant = false;
 
 import { connection } from "next/server";
@@ -34,14 +33,14 @@ export default async function NuevaReserva({ searchParams }) {
       <h1>{funcion.titulo}</h1>
 
       <p>
-        {funcion.fecha} - {funcion.hora} | {funcion.formato} |{" "}
-        {funcion.idioma} | {sala.nombre}
+        {funcion.fecha} - {funcion.hora} | {funcion.formato} | {funcion.idioma}{" "}
+        | {sala.nombre}
       </p>
 
       <MapaAsientos
         sala={sala}
-        ocupados={ocupados}
         precio={funcion.precio}
+        funcionId={funcion.id}
       />
     </main>
   );

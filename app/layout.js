@@ -1,5 +1,6 @@
 import Header from "./components/Header";
-import './global.css';
+import "./global.css";
+import { ReservasProvider } from "./reservas/ReservasProvider";
 
 export const metadata = {
   title: "ORTFlix",
@@ -12,7 +13,11 @@ export default function RootLayout({ children }) {
     <html lang="es">
       <body>
         <Header />
-        {children}
+        <ReservasProvider>
+          
+          {children}
+
+        </ReservasProvider>
       </body>
     </html>
   );

@@ -2,24 +2,49 @@
 
 import { useState } from "react";
 
-export default function MapaAsientos({ sala, ocupados, precio }) {
-  const [seleccionados, setSeleccionados] = useState([]);
+import { useRouter } from "next/navigation";
+import { useReservas } from "../ReservasProvider";
 
-  // Generar las filas y columnas según la sala
+export default function MapaAsientos({ sala, precio, funcionId }) {
+  const router = useRouter();
+  const { reservas, crearReserva } = useReservas();
+
+  const [seleccionados, setSeleccionados] = useState([]);
+  const [mensaje, setMensaje] = useState("");
+
+  //Asientos ocupados de la función actual
+  const ocupadosActuales = reservas
+    .filter((r) => r.funcionId === funcionId && r.estado === "confirmada")
+    .flatMap((r) => r.asientos);
+
   const filas = Array.from({ length: sala.filas }, (_, i) =>
-    String.fromCharCode(65 + i)
+    String.fromCharCode(65 + i),
   );
   const columnas = Array.from({ length: sala.columnas }, (_, i) => i + 1);
 
-  // Seleccionar o deseleccionar un asiento
+  // Seleccionar o deseleccionar asientos
   function seleccionarAsiento(asiento) {
-    if (ocupados.includes(asiento)) return;
+    if (ocupadosActuales.includes(asiento)) return;
+
+    setMensaje("");
 
     if (seleccionados.includes(asiento)) {
       setSeleccionados(seleccionados.filter((a) => a !== asiento));
     } else if (seleccionados.length < 10) {
       setSeleccionados([...seleccionados, asiento]);
     }
+  }
+
+  // Confirmar la reserva de prueba
+  function confirmarReserva() {
+    const resultado = crearReserva(funcionId, seleccionados);
+
+    if (!resultado) {
+      setMensaje("No se pudo confirmar. Revisá los asientos disponibles.");
+      return;
+    }
+
+    router.push("/reservas");
   }
 
   return (
@@ -33,7 +58,7 @@ export default function MapaAsientos({ sala, ocupados, precio }) {
 
           {columnas.map((columna) => {
             const asiento = `${fila}${columna}`;
-            const ocupado = ocupados.includes(asiento);
+            const ocupado = ocupadosActuales.includes(asiento);
             const seleccionado = seleccionados.includes(asiento);
 
             return (
@@ -69,7 +94,19 @@ export default function MapaAsientos({ sala, ocupados, precio }) {
       <p>Asientos: {seleccionados.join(", ") || "Ninguno"}</p>
       <p>Cantidad: {seleccionados.length}</p>
       <p>Total: ${precio * seleccionados.length}</p>
+
       {seleccionados.length === 10 && <p>Máximo de 10 asientos.</p>}
+
+      <button
+        type="button"
+        disabled={seleccionados.length === 0}
+        onClick={confirmarReserva}
+        style={{ padding: 10, marginTop: 10 }}
+      >
+        Confirmar reserva
+      </button>
+
+      {mensaje && <p style={{ color: "green" }}>{mensaje}</p>}
     </div>
   );
 }
