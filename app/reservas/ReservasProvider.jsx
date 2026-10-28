@@ -52,16 +52,75 @@ export function ReservasProvider({ children }) {
     }
 
     setReservas((anteriores) =>
-      anteriores.map((r) =>
-        r.id === id ? { ...r, estado: "cancelada" } : r
+      anteriores.map((r) => (r.id === id ? { ...r, estado: "cancelada" } : r)),
+    );
+
+    return true;
+  }
+
+  // Cambiar una reserva a otra función de la misma película
+  function cambiarReserva(id, nuevaFuncionId, asientos) {
+    const reserva = reservas.find((r) => r.id === id && r.usuarioId === 2);
+    const funcionActual = funciones.find((f) => f.id === reserva?.funcionId);
+    const funcionNueva = funciones.find((f) => f.id === nuevaFuncionId);
+
+    if (
+      !reserva ||
+      !funcionActual ||
+      !funcionNueva ||
+      reserva.estado !== "confirmada" ||
+      funcionActual.movieId !== funcionNueva.movieId ||
+      funcionActual.id === funcionNueva.id
+    ) {
+      return false;
+    }
+
+    // Ambas funciones deben ser futuras
+    const ahora = new Date();
+
+    if (
+      new Date(`${funcionActual.fecha}T${funcionActual.hora}:00`) <= ahora ||
+      new Date(`${funcionNueva.fecha}T${funcionNueva.hora}:00`) <= ahora
+    ) {
+      return false;
+    }
+
+    // Validar cantidad y disponibilidad
+    const ocupados = reservas
+      .filter(
+        (r) =>
+          r.id !== id &&
+          r.funcionId === nuevaFuncionId &&
+          r.estado === "confirmada",
       )
+      .flatMap((r) => r.asientos);
+
+    if (
+      !Array.isArray(asientos) ||
+      asientos.length === 0 ||
+      asientos.length > 10 ||
+      new Set(asientos).size !== asientos.length ||
+      asientos.some((a) => ocupados.includes(a))
+    ) {
+      return false;
+    }
+
+    // Actualizar la reserva y liberar los asientos anteriores
+    setReservas((anteriores) =>
+      anteriores.map((r) =>
+        r.id === id
+          ? { ...r, funcionId: nuevaFuncionId, asientos: [...asientos] }
+          : r,
+      ),
     );
 
     return true;
   }
 
   return (
-    <ReservasContext.Provider value={{ reservas, crearReserva, cancelarReserva }}>
+    <ReservasContext.Provider
+      value={{ reservas, crearReserva, cancelarReserva, cambiarReserva }}
+    >
       {children}
     </ReservasContext.Provider>
   );

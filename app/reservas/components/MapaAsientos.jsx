@@ -5,9 +5,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useReservas } from "../ReservasProvider";
 
-export default function MapaAsientos({ sala, precio, funcionId }) {
+export default function MapaAsientos({ sala, precio, funcionId, reservaId }) {
   const router = useRouter();
-  const { reservas, crearReserva } = useReservas();
+  const { reservas, crearReserva, cambiarReserva } = useReservas();
 
   const [seleccionados, setSeleccionados] = useState([]);
   const [mensaje, setMensaje] = useState("");
@@ -37,7 +37,9 @@ export default function MapaAsientos({ sala, precio, funcionId }) {
 
   // Confirmar la reserva de prueba
   function confirmarReserva() {
-    const resultado = crearReserva(funcionId, seleccionados);
+    const resultado = reservaId
+      ? cambiarReserva(reservaId, funcionId, seleccionados)
+      : crearReserva(funcionId, seleccionados);
 
     if (!resultado) {
       setMensaje("No se pudo confirmar. Revisá los asientos disponibles.");
@@ -103,7 +105,7 @@ export default function MapaAsientos({ sala, precio, funcionId }) {
         onClick={confirmarReserva}
         style={{ padding: 10, marginTop: 10 }}
       >
-        Confirmar reserva
+        {reservaId ? "Confirmar cambio" : "Confirmar reserva"}
       </button>
 
       {mensaje && <p style={{ color: "green" }}>{mensaje}</p>}

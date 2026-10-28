@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 export default function MisReservas() {
   const { reservas, cancelarReserva } = useReservas();
   const [confirmandoId, setConfirmandoId] = useState(null);
+  const [cambiandoId, setCambiandoId] = useState(null);
   const [error, setError] = useState("");
 
   const [ahora, setAhora] = useState(null);
@@ -38,6 +39,15 @@ export default function MisReservas() {
           new Date(`${funcion.fecha}T${funcion.hora}:00`).getTime() <= ahora;
 
         const estado = finalizada ? "finalizada" : reserva.estado;
+
+        // Buscar otras funciones futuras de la misma película
+        const alternativas = funciones.filter(
+          (f) =>
+            f.movieId === funcion.movieId &&
+            f.id !== funcion.id &&
+            ahora !== null &&
+            new Date(`${f.fecha}T${f.hora}:00`).getTime() > ahora,
+        );
 
         return (
           <div
@@ -74,6 +84,40 @@ export default function MisReservas() {
                     >
                       Sí, cancelar
                     </button>
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setCambiandoId(
+                          cambiandoId === reserva.id ? null : reserva.id,
+                        )
+                      }
+                    >
+                      Cambiar función
+                    </button>
+
+                    {cambiandoId === reserva.id && (
+                      <div>
+                        <h3>Elegí otra función</h3>
+
+                        {alternativas.length === 0 && (
+                          <p>
+                            No hay otras funciones disponibles para esta
+                            película.
+                          </p>
+                        )}
+
+                        {alternativas.map((f) => (
+                          <p key={f.id}>
+                            <Link
+                              href={`/reservas/nueva?funcionId=${f.id}&reservaId=${reserva.id}`}
+                            >
+                              {f.fecha} - {f.hora} | {f.formato} | {f.idioma}
+                            </Link>
+                          </p>
+                        ))}
+                      </div>
+                    )}
 
                     <button onClick={() => setConfirmandoId(null)}>No</button>
                   </>

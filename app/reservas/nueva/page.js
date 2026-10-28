@@ -7,7 +7,7 @@ import MapaAsientos from "../components/MapaAsientos";
 export default async function NuevaReserva({ searchParams }) {
   await connection();
 
-  const { funcionId } = await searchParams;
+  const { funcionId, reservaId } = await searchParams;
 
   // Buscar la función elegida
   const funcion = funciones.find((f) => f.id === Number(funcionId));
@@ -41,6 +41,7 @@ export default async function NuevaReserva({ searchParams }) {
         sala={sala}
         precio={funcion.precio}
         funcionId={funcion.id}
+        reservaId={Number(reservaId) || null}
       />
     </main>
   );
