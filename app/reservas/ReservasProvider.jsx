@@ -1,8 +1,7 @@
-
 "use client";
 
 import { createContext, useContext, useState } from "react";
-import { reservas as reservasIniciales } from "@/src/data/mock";
+import { reservas as reservasIniciales, funciones } from "@/src/data/mock";
 
 const ReservasContext = createContext(null);
 
@@ -36,8 +35,33 @@ export function ReservasProvider({ children }) {
     return true;
   }
 
+  // Cancelar una reserva confirmada
+  function cancelarReserva(id) {
+    const reserva = reservas.find((r) => r.id === id && r.usuarioId === 2);
+    const funcion = funciones.find((f) => f.id === reserva?.funcionId);
+
+    if (!reserva || !funcion || reserva.estado !== "confirmada") {
+      return false;
+    }
+
+    // No permitir cancelar funciones que ya comenzaron
+    const fechaFuncion = new Date(`${funcion.fecha}T${funcion.hora}:00`);
+
+    if (fechaFuncion <= new Date()) {
+      return false;
+    }
+
+    setReservas((anteriores) =>
+      anteriores.map((r) =>
+        r.id === id ? { ...r, estado: "cancelada" } : r
+      )
+    );
+
+    return true;
+  }
+
   return (
-    <ReservasContext.Provider value={{ reservas, crearReserva }}>
+    <ReservasContext.Provider value={{ reservas, crearReserva, cancelarReserva }}>
       {children}
     </ReservasContext.Provider>
   );

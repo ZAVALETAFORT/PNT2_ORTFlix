@@ -6,7 +6,10 @@ import { useReservas } from "./ReservasProvider";
 import { useEffect, useState } from "react";
 
 export default function MisReservas() {
-  const { reservas } = useReservas();
+  const { reservas, cancelarReserva } = useReservas();
+  const [confirmandoId, setConfirmandoId] = useState(null);
+  const [error, setError] = useState("");
+
   const [ahora, setAhora] = useState(null);
 
   useEffect(() => {
@@ -52,6 +55,42 @@ export default function MisReservas() {
             <p>Asientos: {reserva.asientos.join(", ")}</p>
             <p>Total: ${reserva.asientos.length * funcion.precio}</p>
             <p>Estado: {estado}</p>
+
+            {estado === "confirmada" && (
+              <div>
+                {confirmandoId === reserva.id ? (
+                  <>
+                    <p>¿Seguro que querés cancelar esta reserva?</p>
+
+                    <button
+                      onClick={() => {
+                        if (cancelarReserva(reserva.id)) {
+                          setConfirmandoId(null);
+                          setError("");
+                        } else {
+                          setError("No se puede cancelar esta reserva.");
+                        }
+                      }}
+                    >
+                      Sí, cancelar
+                    </button>
+
+                    <button onClick={() => setConfirmandoId(null)}>No</button>
+                  </>
+                ) : (
+                  <button
+                    onClick={() => {
+                      setError("");
+                      setConfirmandoId(reserva.id);
+                    }}
+                  >
+                    Cancelar reserva
+                  </button>
+                )}
+
+                {confirmandoId === reserva.id && error && <p>{error}</p>}
+              </div>
+            )}
           </div>
         );
       })}
