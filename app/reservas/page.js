@@ -73,6 +73,7 @@ export default function MisReservas() {
                     <p>¿Seguro que querés cancelar esta reserva?</p>
 
                     <button
+                      type="button"
                       onClick={() => {
                         if (cancelarReserva(reserva.id)) {
                           setConfirmandoId(null);
@@ -87,42 +88,14 @@ export default function MisReservas() {
 
                     <button
                       type="button"
-                      onClick={() =>
-                        setCambiandoId(
-                          cambiandoId === reserva.id ? null : reserva.id,
-                        )
-                      }
+                      onClick={() => setConfirmandoId(null)}
                     >
-                      Cambiar función
+                      No
                     </button>
-
-                    {cambiandoId === reserva.id && (
-                      <div>
-                        <h3>Elegí otra función</h3>
-
-                        {alternativas.length === 0 && (
-                          <p>
-                            No hay otras funciones disponibles para esta
-                            película.
-                          </p>
-                        )}
-
-                        {alternativas.map((f) => (
-                          <p key={f.id}>
-                            <Link
-                              href={`/reservas/nueva?funcionId=${f.id}&reservaId=${reserva.id}`}
-                            >
-                              {f.fecha} - {f.hora} | {f.formato} | {f.idioma}
-                            </Link>
-                          </p>
-                        ))}
-                      </div>
-                    )}
-
-                    <button onClick={() => setConfirmandoId(null)}>No</button>
                   </>
                 ) : (
                   <button
+                    type="button"
                     onClick={() => {
                       setError("");
                       setConfirmandoId(reserva.id);
@@ -133,6 +106,39 @@ export default function MisReservas() {
                 )}
 
                 {confirmandoId === reserva.id && error && <p>{error}</p>}
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setCambiandoId(
+                      cambiandoId === reserva.id ? null : reserva.id,
+                    )
+                  }
+                >
+                  Cambiar función
+                </button>
+
+                {cambiandoId === reserva.id && (
+                  <div>
+                    <h3>Elegí otra función</h3>
+
+                    {alternativas.length === 0 && (
+                      <p>
+                        No hay otras funciones disponibles para esta película.
+                      </p>
+                    )}
+
+                    {alternativas.map((f) => (
+                      <p key={f.id}>
+                        <Link
+                          href={`/reservas/nueva?funcionId=${f.id}&reservaId=${reserva.id}`}
+                        >
+                          {f.fecha} - {f.hora} | {f.formato} | {f.idioma}
+                        </Link>
+                      </p>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
           </div>

@@ -1,7 +1,7 @@
 export const instant = false;
 
 import { connection } from "next/server";
-import { funciones, salas, reservas } from "@/src/data/mock";
+import { funciones, salas } from "@/src/data/mock";
 import MapaAsientos from "../components/MapaAsientos";
 
 export default async function NuevaReserva({ searchParams }) {
@@ -22,11 +22,6 @@ export default async function NuevaReserva({ searchParams }) {
   if (!sala) {
     return <p>Sala no encontrada.</p>;
   }
-
-  // Buscar asientos ocupados en reservas confirmadas
-  const ocupados = reservas
-    .filter((r) => r.funcionId === funcion.id && r.estado === "confirmada")
-    .flatMap((r) => r.asientos);
 
   return (
     <main style={{ padding: 20 }}>
