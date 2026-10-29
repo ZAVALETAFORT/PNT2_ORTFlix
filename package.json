@@ -6,10 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:init": "node --no-warnings database/initDb.js"
   },
   "dependencies": {
-    "better-sqlite3": "^13.0.3",
     "next": "^16.4.3",
     "react": "19.3.0",
     "react-dom": "19.3.0"
