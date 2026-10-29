@@ -40,13 +40,14 @@ export default function RegisterPage() {
       return;
     }
 
-    // Validar formato del email
+       // Validar formato del email
     const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!emailValido.test(formulario.email.trim())) {
       setError("Ingresá un email válido.");
       return;
     }
+
 
     // Validar contraseña
     if (formulario.password.length < 6) {
@@ -66,11 +67,16 @@ export default function RegisterPage() {
           password: formulario.password,
         }),
       });
-      
+
+      // Si el servidor no responde JSON (por ejemplo un 404 en HTML), seguimos con un objeto vacío
       const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        setError(data.message || "No se pudo crear la cuenta.");
+        if (response.status === 409) {
+          setError("Ese email ya está registrado.");
+        } else {
+          setError(data.message || "No se pudo crear la cuenta.");
+        }
         return;
       }
 

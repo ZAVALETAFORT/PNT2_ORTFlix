@@ -40,11 +40,22 @@ export default function LoginPage() {
         return;
       }
 
-      // Se guarda la sesión con las claves compartidas del equipo
-      const nombre = data.user?.name ?? email.trim();
+      // El login del profesor no trae el rol: se lo pedimos a nuestra API con el token
+      const responseMe = await fetch("/api/users/me", {
+        headers: { Authorization: `Bearer ${data.token}` },
+      });
+
+      if (!responseMe.ok) {
+        setError("No se pudo obtener el rol del usuario.");
+        return;
+      }
+
+      const usuario = await responseMe.json();
+
+      // Se guarda la sesión con las claves del contrato (README), agregando el rol
       localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify({ name: nombre, email: email.trim() }));
-      localStorage.setItem("userEmail", email.trim());
+      localStorage.setItem("user", JSON.stringify({ ...data.user, rol: usuario.rol }));
+      localStorage.setItem("userEmail", data.user.email);
 
       router.push("/");
     } catch {
