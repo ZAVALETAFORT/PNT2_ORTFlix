@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useRouter } from "next/navigation";
 import { useReservas } from "../ReservasProvider";
@@ -10,12 +10,54 @@ export default function MapaAsientos({ sala, precio, funcionId, reservaId }) {
   const { reservas, crearReserva, cambiarReserva } = useReservas();
 
   const [seleccionados, setSeleccionados] = useState([]);
+
+  const [ocupacionApi, setOcupacionApi] = useState({
+    funcionId: null,
+    asientos: [],
+    error: null,
+  });
+
+  // Consultar los asientos ocupados de la función en SQLite
+  useEffect(() => {
+    let activo = true;
+
+    fetch(`/api/funciones/${funcionId}/asientos-ocupados`, {
+      cache: "no-store",
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("No se pudo consultar la disponibilidad.");
+        return res.json();
+      })
+      .then((asientos) => {
+        if (activo) {
+          setOcupacionApi({ funcionId, asientos, error: null });
+        }
+      })
+      .catch((error) => {
+        if (activo) {
+          setOcupacionApi({ funcionId, asientos: [], error: error.message });
+        }
+      });
+
+    return () => {
+      activo = false;
+    };
+  }, [funcionId]);
+
+  const cargando = ocupacionApi.funcionId !== funcionId;
+  const errorOcupacion = !cargando && ocupacionApi.error;
+
   const [mensaje, setMensaje] = useState("");
 
   //Asientos ocupados de la función actual
-  const ocupadosActuales = reservas
-    .filter((r) => r.funcionId === funcionId && r.estado === "confirmada")
-    .flatMap((r) => r.asientos);
+  const ocupadosActuales = [
+    ...new Set([
+      ...(!cargando ? ocupacionApi.asientos : []),
+      ...reservas
+        .filter((r) => r.funcionId === funcionId && r.estado === "confirmada")
+        .flatMap((r) => r.asientos),
+    ]),
+  ];
 
   const filas = Array.from({ length: sala.filas }, (_, i) =>
     String.fromCharCode(65 + i),
@@ -52,6 +94,8 @@ export default function MapaAsientos({ sala, precio, funcionId, reservaId }) {
   return (
     <div>
       <h2>Seleccioná tus asientos</h2>
+      {cargando && <p>Cargando disponibilidad...</p>}
+      {errorOcupacion && <p role="alert">{errorOcupacion}</p>}
       <p style={{ textAlign: "center" }}>PANTALLA</p>
 
       {filas.map((fila) => (
@@ -67,7 +111,7 @@ export default function MapaAsientos({ sala, precio, funcionId, reservaId }) {
               <button
                 key={asiento}
                 type="button"
-                disabled={ocupado}
+                disabled={ocupado || cargando || !!errorOcupacion}
                 onClick={() => seleccionarAsiento(asiento)}
                 aria-label={`Asiento ${asiento}`}
                 aria-pressed={seleccionado}
@@ -101,7 +145,7 @@ export default function MapaAsientos({ sala, precio, funcionId, reservaId }) {
 
       <button
         type="button"
-        disabled={seleccionados.length === 0}
+       disabled={seleccionados.length === 0 || cargando || !!errorOcupacion}
         onClick={confirmarReserva}
         style={{ padding: 10, marginTop: 10 }}
       >
