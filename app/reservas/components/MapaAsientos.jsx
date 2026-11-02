@@ -11,6 +11,8 @@ export default function MapaAsientos({ sala, precio, funcionId, reservaId }) {
 
   const [seleccionados, setSeleccionados] = useState([]);
 
+  const [enviando, setEnviando] = useState(false);
+
   const [ocupacionApi, setOcupacionApi] = useState({
     funcionId: null,
     asientos: [],
@@ -78,17 +80,41 @@ export default function MapaAsientos({ sala, precio, funcionId, reservaId }) {
   }
 
   // Confirmar la reserva de prueba
-  function confirmarReserva() {
-    const resultado = reservaId
-      ? cambiarReserva(reservaId, funcionId, seleccionados)
-      : crearReserva(funcionId, seleccionados);
+  async function confirmarReserva() {
+    if (enviando) return;
 
-    if (!resultado) {
-      setMensaje("No se pudo confirmar. Revisá los asientos disponibles.");
-      return;
+    setEnviando(true);
+
+    try {
+      const resultado = reservaId
+        ? cambiarReserva(reservaId, funcionId, seleccionados)
+        : await crearReserva(funcionId, seleccionados);
+
+      if (!resultado || (typeof resultado === "object" && !resultado.ok)) {
+        setMensaje(resultado?.message || "No se pudo confirmar la reserva.");
+
+        // Si otro usuario ocupó los asientos, refrescar el mapa
+        if (resultado?.status === 409) {
+          const res = await fetch(
+            `/api/funciones/${funcionId}/asientos-ocupados`,
+            { cache: "no-store" },
+          );
+
+          if (res.ok) {
+            const asientos = await res.json();
+            setOcupacionApi({ funcionId, asientos, error: null });
+          }
+
+          setSeleccionados([]);
+        }
+
+        return;
+      }
+
+      router.push("/reservas");
+    } finally {
+      setEnviando(false);
     }
-
-    router.push("/reservas");
   }
 
   return (
@@ -145,7 +171,9 @@ export default function MapaAsientos({ sala, precio, funcionId, reservaId }) {
 
       <button
         type="button"
-       disabled={seleccionados.length === 0 || cargando || !!errorOcupacion}
+        disabled={
+          seleccionados.length === 0 || cargando || !!errorOcupacion || enviando
+        }
         onClick={confirmarReserva}
         style={{ padding: 10, marginTop: 10 }}
       >

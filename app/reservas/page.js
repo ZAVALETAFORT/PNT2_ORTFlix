@@ -6,7 +6,9 @@ import { useReservas } from "./ReservasProvider";
 import { useEffect, useState } from "react";
 
 export default function MisReservas() {
-  const { reservas, cancelarReserva } = useReservas();
+  const { reservas, cancelarReserva, cargandoReservas, errorReservas } =
+    useReservas();
+
   const [confirmandoId, setConfirmandoId] = useState(null);
   const [cambiandoId, setCambiandoId] = useState(null);
   const [error, setError] = useState("");
@@ -19,15 +21,20 @@ export default function MisReservas() {
   }, []);
 
   // Usuario de prueba del mock
-  const misReservas = reservas.filter((r) => r.usuarioId === 2);
+  const misReservas = reservas;
 
   return (
     <main style={{ padding: 20 }}>
       <h1>Mis reservas</h1>
 
-      {misReservas.length === 0 && <p>Todavía no tenés reservas.</p>}
+      {cargandoReservas && <p>Cargando reservas...</p>}
+      {errorReservas && <p role="alert">{errorReservas}</p>}
 
-      {misReservas.map((reserva) => {
+      {!cargandoReservas && !errorReservas && misReservas.length === 0 && (
+        <p>Todavía no tenés reservas.</p>
+      )}
+
+     {!cargandoReservas && !errorReservas && misReservas.map((reserva) => {
         const funcion = funciones.find((f) => f.id === reserva.funcionId);
         const sala = salas.find((s) => s.id === funcion?.salaId);
 

@@ -1,38 +1,102 @@
 "use client";
 
-import { createContext, useContext, useState } from "react";
-import { reservas as reservasIniciales, funciones } from "@/src/data/mock";
+import { createContext, useContext, useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
+import { funciones } from "@/src/data/mock";
 
 const ReservasContext = createContext(null);
 
 export function ReservasProvider({ children }) {
-  const [reservas, setReservas] = useState(reservasIniciales);
+  const pathname = usePathname();
 
-  function crearReserva(funcionId, asientos) {
-    // Verificar que no haya asientos ocupados
-    const ocupados = reservas
-      .filter((r) => r.funcionId === funcionId && r.estado === "confirmada")
-      .flatMap((r) => r.asientos);
+  const [reservas, setReservas] = useState([]);
+  const [consulta, setConsulta] = useState({ ruta: null, error: "" });
 
+  const cargandoReservas =
+    pathname.startsWith("/reservas") && consulta.ruta !== pathname;
+
+  const errorReservas = consulta.ruta === pathname ? consulta.error : "";
+
+  // Consultar las reservas del usuario autenticado
+  useEffect(() => {
+    if (!pathname.startsWith("/reservas")) return;
+
+    let activo = true;
+    const token = localStorage.getItem("token");
+
+    fetch("/api/reservas", {
+      headers: { Authorization: `Bearer ${token || ""}` },
+      cache: "no-store",
+    })
+      .then(async (res) => {
+        const datos = await res.json();
+        if (!res.ok)
+          throw new Error(datos.message || "Error al consultar reservas.");
+        return datos;
+      })
+      .then((datos) => {
+        if (activo) {
+          setReservas(datos);
+          setConsulta({ ruta: pathname, error: "" });
+        }
+      })
+      .catch((error) => {
+        if (activo) {
+          setReservas([]);
+          setConsulta({ ruta: pathname, error: error.message });
+        }
+      });
+
+    return () => {
+      activo = false;
+    };
+  }, [pathname]);
+
+  async function crearReserva(funcionId, asientos) {
     if (
+      !Array.isArray(asientos) ||
       asientos.length === 0 ||
       asientos.length > 10 ||
-      asientos.some((a) => ocupados.includes(a))
+      new Set(asientos).size !== asientos.length
     ) {
-      return false;
+      return {
+        ok: false,
+        message: "Seleccioná entre 1 y 10 asientos distintos.",
+      };
     }
 
-    const nuevaReserva = {
-      id: Math.max(0, ...reservas.map((r) => r.id)) + 1,
-      usuarioId: 2, // Cliente de prueba del mock
-      funcionId,
-      asientos: [...asientos],
-      estado: "confirmada",
-      fechaCreacion: new Date().toISOString(),
-    };
+    try {
+      const token = localStorage.getItem("token");
 
-    setReservas([...reservas, nuevaReserva]);
-    return true;
+      if (!token) {
+        return { ok: false, message: "Necesitás iniciar sesión." };
+      }
+
+      const res = await fetch("/api/reservas", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ funcionId, asientos }),
+      });
+
+      const datos = await res.json();
+
+      if (!res.ok) {
+        return {
+          ok: false,
+          status: res.status,
+          message: datos.message || "No se pudo confirmar la reserva.",
+        };
+      }
+
+      setReservas((anteriores) => [...anteriores, datos]);
+
+      return { ok: true };
+    } catch {
+      return { ok: false, message: "Error de conexión con el servidor." };
+    }
   }
 
   // Cancelar una reserva confirmada
@@ -119,7 +183,14 @@ export function ReservasProvider({ children }) {
 
   return (
     <ReservasContext.Provider
-      value={{ reservas, crearReserva, cancelarReserva, cambiarReserva }}
+      value={{
+        reservas,
+        crearReserva,
+        cancelarReserva,
+        cambiarReserva,
+        cargandoReservas,
+        errorReservas,
+      }}
     >
       {children}
     </ReservasContext.Provider>
