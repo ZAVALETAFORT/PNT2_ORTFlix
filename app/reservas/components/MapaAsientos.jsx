@@ -21,7 +21,7 @@ export default function MapaAsientos({ funcionId, reservaId }) {
     error: null,
   });
 
-  // Consultar los asientos ocupados de la función en SQLite
+  // Consultar asientos ocupados de la funcion en SQLite
   useEffect(() => {
     let activo = true;
 
@@ -53,10 +53,10 @@ export default function MapaAsientos({ funcionId, reservaId }) {
 
   const [mensaje, setMensaje] = useState("");
 
-  // Usa la disponibilidad real de SQLite.
+  // Usa la disponibilidad de asientos
   const ocupadosActuales = cargando ? [] : ocupacionApi.asientos;
 
-  // Marca o desmarca un asiento, hasta un máximo de 10.
+  // Marca o desmarca un asiento, hasta un max de 10
   function seleccionarAsiento(asiento) {
     if (ocupadosActuales.includes(asiento)) return;
 
