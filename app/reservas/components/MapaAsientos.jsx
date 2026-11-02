@@ -5,9 +5,11 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useReservas } from "../ReservasProvider";
 
-export default function MapaAsientos({ sala, precio, funcionId, reservaId }) {
+export default function MapaAsientos({ funcionId, reservaId }) {
   const router = useRouter();
-  const { reservas, crearReserva, cambiarReserva } = useReservas();
+  const { funciones, salas, crearReserva, cambiarReserva, cargandoReservas, errorReservas } = useReservas();
+  const funcion = funciones.find((f) => f.id === funcionId);
+  const sala = salas.find((s) => s.id === funcion?.salaId);
 
   const [seleccionados, setSeleccionados] = useState([]);
 
@@ -51,22 +53,10 @@ export default function MapaAsientos({ sala, precio, funcionId, reservaId }) {
 
   const [mensaje, setMensaje] = useState("");
 
-  //Asientos ocupados de la función actual
-  const ocupadosActuales = [
-    ...new Set([
-      ...(!cargando ? ocupacionApi.asientos : []),
-      ...reservas
-        .filter((r) => r.funcionId === funcionId && r.estado === "confirmada")
-        .flatMap((r) => r.asientos),
-    ]),
-  ];
+  // Usa la disponibilidad real de SQLite.
+  const ocupadosActuales = cargando ? [] : ocupacionApi.asientos;
 
-  const filas = Array.from({ length: sala.filas }, (_, i) =>
-    String.fromCharCode(65 + i),
-  );
-  const columnas = Array.from({ length: sala.columnas }, (_, i) => i + 1);
-
-  // Seleccionar o deseleccionar asientos
+  // Marca o desmarca un asiento, hasta un máximo de 10.
   function seleccionarAsiento(asiento) {
     if (ocupadosActuales.includes(asiento)) return;
 
@@ -79,15 +69,18 @@ export default function MapaAsientos({ sala, precio, funcionId, reservaId }) {
     }
   }
 
-  // Confirmar la reserva de prueba
+  // Guarda una reserva nueva o cambia de función.
   async function confirmarReserva() {
     if (enviando) return;
-
+    if (new Date(`${funcion.fecha}T${funcion.hora}:00`) <= new Date()) {
+      setMensaje("La función ya comenzó.");
+      return;
+    }
     setEnviando(true);
 
     try {
       const resultado = reservaId
-        ? cambiarReserva(reservaId, funcionId, seleccionados)
+        ? await cambiarReserva(reservaId, funcionId, seleccionados)
         : await crearReserva(funcionId, seleccionados);
 
       if (!resultado || (typeof resultado === "object" && !resultado.ok)) {
@@ -112,21 +105,33 @@ export default function MapaAsientos({ sala, precio, funcionId, reservaId }) {
       }
 
       router.push("/reservas");
+    } catch {
+      setOcupacionApi({ funcionId, asientos: [], error: "No se pudo actualizar la disponibilidad." });
+      setMensaje("Error de conexión con el servidor.");
     } finally {
       setEnviando(false);
     }
   }
 
+  if (cargandoReservas) return <p>Cargando función...</p>;
+  if (errorReservas) return <p className="error">{errorReservas}</p>;
+  if (!funcion || !sala) return <p>Función no encontrada.</p>;
+
+  const filas = Array.from({ length: sala.filas }, (_, i) => String.fromCharCode(65 + i));
+  const columnas = Array.from({ length: sala.columnas }, (_, i) => i + 1);
+
   return (
     <div>
+      <h1>{funcion.titulo}</h1>
+      <p>{funcion.fecha} - {funcion.hora} | {funcion.formato} | {funcion.idioma} | {sala.nombre}</p>
       <h2>Seleccioná tus asientos</h2>
       {cargando && <p>Cargando disponibilidad...</p>}
-      {errorOcupacion && <p role="alert">{errorOcupacion}</p>}
-      <p style={{ textAlign: "center" }}>PANTALLA</p>
+      {errorOcupacion && <p className="error" role="alert">{errorOcupacion}</p>}
+      <p className="pantalla">PANTALLA</p>
 
       {filas.map((fila) => (
-        <div key={fila} style={{ display: "flex", gap: 5, marginBottom: 5 }}>
-          <strong style={{ width: 25 }}>{fila}</strong>
+        <div key={fila} className="fila">
+          <strong>{fila}</strong>
 
           {columnas.map((columna) => {
             const asiento = `${fila}${columna}`;
@@ -137,21 +142,11 @@ export default function MapaAsientos({ sala, precio, funcionId, reservaId }) {
               <button
                 key={asiento}
                 type="button"
-                disabled={ocupado || cargando || !!errorOcupacion}
+                disabled={ocupado || cargando || !!errorOcupacion || enviando}
                 onClick={() => seleccionarAsiento(asiento)}
                 aria-label={`Asiento ${asiento}`}
                 aria-pressed={seleccionado}
-                style={{
-                  width: 38,
-                  height: 38,
-                  backgroundColor: ocupado
-                    ? "#888"
-                    : seleccionado
-                      ? "#2196f3"
-                      : "#90ee90",
-                  color: "#111",
-                  cursor: ocupado ? "not-allowed" : "pointer",
-                }}
+                className={ocupado ? "asiento ocupado" : seleccionado ? "asiento seleccionado" : "asiento"}
               >
                 {columna}
               </button>
@@ -165,7 +160,7 @@ export default function MapaAsientos({ sala, precio, funcionId, reservaId }) {
       <h3>Resumen de la reserva</h3>
       <p>Asientos: {seleccionados.join(", ") || "Ninguno"}</p>
       <p>Cantidad: {seleccionados.length}</p>
-      <p>Total: ${precio * seleccionados.length}</p>
+      <p>Total: ${funcion.precio * seleccionados.length}</p>
 
       {seleccionados.length === 10 && <p>Máximo de 10 asientos.</p>}
 
@@ -175,12 +170,12 @@ export default function MapaAsientos({ sala, precio, funcionId, reservaId }) {
           seleccionados.length === 0 || cargando || !!errorOcupacion || enviando
         }
         onClick={confirmarReserva}
-        style={{ padding: 10, marginTop: 10 }}
+        className="confirmar"
       >
         {reservaId ? "Confirmar cambio" : "Confirmar reserva"}
       </button>
 
-      {mensaje && <p style={{ color: "green" }}>{mensaje}</p>}
+      {mensaje && <p className="error">{mensaje}</p>}
     </div>
   );
 }

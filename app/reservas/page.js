@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useReservas } from "./ReservasProvider";
 import { useEffect, useState } from "react";
+import "./reservas.css";
 
 export default function MisReservas() {
   const {
@@ -22,28 +23,39 @@ export default function MisReservas() {
 
   const [ahora, setAhora] = useState(null);
 
+  // Marca como finalizadas las funciones que ya pasaron.
   useEffect(() => {
     const timer = setTimeout(() => setAhora(Date.now()), 0);
     return () => clearTimeout(timer);
   }, []);
 
-  // Usuario de prueba del mock
-  const misReservas = reservas;
+
+  // Confirma la cancelación y actualiza el listado.
+  async function confirmarCancelacion(id) {
+    setCancelandoId(id);
+    try {
+      const resultado = await cancelarReserva(id);
+      setError(resultado.ok ? "" : resultado.message);
+      if (resultado.ok) setConfirmandoId(null);
+    } finally {
+      setCancelandoId(null);
+    }
+  }
 
   return (
-    <main style={{ padding: 20 }}>
+    <main className="reservas">
       <h1>Mis reservas</h1>
 
       {cargandoReservas && <p>Cargando reservas...</p>}
-      {errorReservas && <p role="alert">{errorReservas}</p>}
+      {errorReservas && <p className="error" role="alert">{errorReservas}</p>}
 
-      {!cargandoReservas && !errorReservas && misReservas.length === 0 && (
+      {!cargandoReservas && !errorReservas && reservas.length === 0 && (
         <p>Todavía no tenés reservas.</p>
       )}
 
       {!cargandoReservas &&
         !errorReservas &&
-        misReservas.map((reserva) => {
+        reservas.map((reserva) => {
           const funcion = funciones.find((f) => f.id === reserva.funcionId);
           const sala = salas.find((s) => s.id === funcion?.salaId);
 
@@ -68,7 +80,7 @@ export default function MisReservas() {
           return (
             <div
               key={reserva.id}
-              style={{ border: "1px solid #aaa", padding: 15, marginTop: 15 }}
+              className="reserva"
             >
               <h2>{funcion.titulo}</h2>
               <p>
@@ -78,34 +90,19 @@ export default function MisReservas() {
                 Formato: {funcion.formato} - {funcion.idioma}
               </p>
               <p>Sala: {sala?.nombre}</p>
-              <p>Asientos: {reserva.asientos.join(", ")}</p>
+              <p>Asientos: {reserva.asientos.join(", ") || "Sin asientos"}</p>
               <p>Total: ${reserva.asientos.length * funcion.precio}</p>
-              <p>Estado: {estado}</p>
+              <p>Estado: <span className={`estado-${estado}`}>{estado}</span></p>
 
               {estado === "confirmada" && (
-                <div>
+                <div className="acciones">
                   {confirmandoId === reserva.id ? (
                     <>
                       <p>¿Seguro que querés cancelar esta reserva?</p>
 
                       <button
                         type="button"
-                        onClick={async () => {
-                          setCancelandoId(reserva.id);
-
-                          try {
-                            const resultado = await cancelarReserva(reserva.id);
-
-                            if (resultado.ok) {
-                              setConfirmandoId(null);
-                              setError("");
-                            } else {
-                              setError(resultado.message);
-                            }
-                          } finally {
-                            setCancelandoId(null);
-                          }
-                        }}
+                        onClick={() => confirmarCancelacion(reserva.id)}
                         disabled={cancelandoId === reserva.id}
                       >
                         Sí, cancelar
@@ -131,7 +128,7 @@ export default function MisReservas() {
                     </button>
                   )}
 
-                  {confirmandoId === reserva.id && error && <p>{error}</p>}
+                  {confirmandoId === reserva.id && error && <p className="error">{error}</p>}
 
                   <button
                     type="button"
@@ -171,7 +168,7 @@ export default function MisReservas() {
           );
         })}
 
-      <p style={{ marginTop: 20 }}>
+      <p className="volver">
         <Link href="/">Volver a cartelera</Link>
       </p>
     </main>
