@@ -31,28 +31,20 @@ export function ReservasProvider({ children }) {
       try {
         const token = localStorage.getItem("token");
 
-        const respuestas = await Promise.all([
-          fetch("/api/reservas", {
-            headers: { Authorization: `Bearer ${token || ""}` },
-            cache: "no-store",
-          }),
-          fetch("/api/funciones", { cache: "no-store" }),
-          fetch("/api/salas", { cache: "no-store" }),
-        ]);
+        const resReservas = await fetch("/api/reservas", {
+          headers: { Authorization: `Bearer ${token || ""}` },
+          cache: "no-store",
+        });
+        const resFunciones = await fetch("/api/funciones", { cache: "no-store" });
+        const resSalas = await fetch("/api/salas", { cache: "no-store" });
 
-        const datos = await Promise.all(respuestas.map((r) => r.json()));
-        const fallo = respuestas.findIndex((r) => !r.ok);
-
-        if (fallo !== -1) {
-          throw new Error(
-            datos[fallo].message || "No se pudieron cargar los datos.",
-          );
-        }
+        if (!resReservas.ok) throw new Error("Necesitás iniciar sesión.");
+        if (!resFunciones.ok || !resSalas.ok) throw new Error("No se pudieron cargar los datos.");
 
         if (activo) {
-          setReservas(datos[0]);
-          setFunciones(datos[1]);
-          setSalas(datos[2]);
+          setReservas(await resReservas.json());
+          setFunciones(await resFunciones.json());
+          setSalas(await resSalas.json());
           setConsulta({ ruta: pathname, error: "" });
         }
       } catch (error) {
