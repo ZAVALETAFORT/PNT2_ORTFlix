@@ -2,7 +2,6 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { funciones } from "@/src/data/mock";
 
 const ReservasContext = createContext(null);
 
@@ -10,6 +9,10 @@ export function ReservasProvider({ children }) {
   const pathname = usePathname();
 
   const [reservas, setReservas] = useState([]);
+
+  const [funciones, setFunciones] = useState([]);
+  const [salas, setSalas] = useState([]);
+
   const [consulta, setConsulta] = useState({ ruta: null, error: "" });
 
   const cargandoReservas =
@@ -18,34 +21,51 @@ export function ReservasProvider({ children }) {
   const errorReservas = consulta.ruta === pathname ? consulta.error : "";
 
   // Consultar las reservas del usuario autenticado
+
   useEffect(() => {
     if (!pathname.startsWith("/reservas")) return;
 
     let activo = true;
-    const token = localStorage.getItem("token");
 
-    fetch("/api/reservas", {
-      headers: { Authorization: `Bearer ${token || ""}` },
-      cache: "no-store",
-    })
-      .then(async (res) => {
-        const datos = await res.json();
-        if (!res.ok)
-          throw new Error(datos.message || "Error al consultar reservas.");
-        return datos;
-      })
-      .then((datos) => {
+    async function cargarDatos() {
+      try {
+        const token = localStorage.getItem("token");
+
+        const respuestas = await Promise.all([
+          fetch("/api/reservas", {
+            headers: { Authorization: `Bearer ${token || ""}` },
+            cache: "no-store",
+          }),
+          fetch("/api/funciones", { cache: "no-store" }),
+          fetch("/api/salas", { cache: "no-store" }),
+        ]);
+
+        const datos = await Promise.all(respuestas.map((r) => r.json()));
+        const fallo = respuestas.findIndex((r) => !r.ok);
+
+        if (fallo !== -1) {
+          throw new Error(
+            datos[fallo].message || "No se pudieron cargar los datos.",
+          );
+        }
+
         if (activo) {
-          setReservas(datos);
+          setReservas(datos[0]);
+          setFunciones(datos[1]);
+          setSalas(datos[2]);
           setConsulta({ ruta: pathname, error: "" });
         }
-      })
-      .catch((error) => {
+      } catch (error) {
         if (activo) {
           setReservas([]);
+          setFunciones([]);
+          setSalas([]);
           setConsulta({ ruta: pathname, error: error.message });
         }
-      });
+      }
+    }
+
+    cargarDatos();
 
     return () => {
       activo = false;
@@ -121,6 +141,261 @@ export function ReservasProvider({ children }) {
 
     return true;
   }
+  // Enviar cancelaciones y cambios a SQLite
+  async function actualizarReserva(id, body) {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      return { ok: false, message: "Necesitás iniciar sesión." };
+    }
+
+    try {
+      const res = await fetch(`/api/reservas/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(body),
+      });
+
+      const datos = await res.json();
+
+      if (!res.ok) {
+        return {
+          ok: false,
+          status: res.status,
+          message: datos.message || "No se pudo actualizar la reserva.",
+        };
+      }
+
+      return { ok: true, reserva: datos };
+    } catch {
+      return { ok: false, message: "Error de conexión con el servidor." };
+    }
+  }
+
+  // Cancelar una reserva confirmada antes del inicio
+
+  // Enviar cancelaciones y cambios a SQLite
+  async function actualizarReserva(id, body) {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      return { ok: false, message: "Necesitás iniciar sesión." };
+    }
+
+    try {
+      const res = await fetch(`/api/reservas/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(body),
+      });
+
+      const datos = await res.json();
+
+      if (!res.ok) {
+        return {
+          ok: false,
+          status: res.status,
+          message: datos.message || "No se pudo actualizar la reserva.",
+        };
+      }
+
+      return { ok: true, reserva: datos };
+    } catch {
+      return { ok: false, message: "Error de conexión con el servidor." };
+    }
+  }
+
+  // Cancelar una reserva confirmada antes del inicio
+  async function cancelarReserva(id) {
+    const reserva = reservas.find((r) => r.id === id);
+    const funcion = funciones.find((f) => f.id === reserva?.funcionId);
+
+    if (!reserva || !funcion || reserva.estado !== "confirmada") {
+      return { ok: false, message: "La reserva no se puede cancelar." };
+    }
+
+    if (new Date(`${funcion.fecha}T${funcion.hora}:00`) <= new Date()) {
+      return { ok: false, message: "La función ya comenzó." };
+    }
+
+    const resultado = await actualizarReserva(id, { estado: "cancelada" });
+
+    if (resultado.ok) {
+      setReservas((anteriores) =>
+        anteriores.map((r) => (r.id === id ? resultado.reserva : r)),
+      );
+    }
+
+    return resultado;
+  }
+
+  // Cambiar a otra función futura de la misma película
+  async function cambiarReserva(id, nuevaFuncionId, asientos) {
+    const reserva = reservas.find((r) => r.id === id);
+    const actual = funciones.find((f) => f.id === reserva?.funcionId);
+    const nueva = funciones.find((f) => f.id === nuevaFuncionId);
+
+    if (
+      !reserva ||
+      !actual ||
+      !nueva ||
+      reserva.estado !== "confirmada" ||
+      actual.movieId !== nueva.movieId ||
+      actual.id === nueva.id
+    ) {
+      return { ok: false, message: "No se puede cambiar esta función." };
+    }
+
+    const ahora = new Date();
+
+    if (
+      new Date(`${actual.fecha}T${actual.hora}:00`) <= ahora ||
+      new Date(`${nueva.fecha}T${nueva.hora}:00`) <= ahora
+    ) {
+      return { ok: false, message: "La función ya comenzó." };
+    }
+
+    if (
+      !Array.isArray(asientos) ||
+      asientos.length === 0 ||
+      asientos.length > 10 ||
+      new Set(asientos).size !== asientos.length
+    ) {
+      return {
+        ok: false,
+        message: "Seleccioná entre 1 y 10 asientos distintos.",
+      };
+    }
+
+    const resultado = await actualizarReserva(id, {
+      funcionId: nuevaFuncionId,
+      asientos,
+    });
+
+    if (resultado.ok) {
+      setReservas((anteriores) =>
+        anteriores.map((r) => (r.id === id ? resultado.reserva : r)),
+      );
+    }
+
+    return resultado;
+  }
+
+  // Enviar cancelaciones y cambios a SQLite
+  async function actualizarReserva(id, body) {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      return { ok: false, message: "Necesitás iniciar sesión." };
+    }
+
+    try {
+      const res = await fetch(`/api/reservas/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(body),
+      });
+
+      const datos = await res.json();
+
+      if (!res.ok) {
+        return {
+          ok: false,
+          status: res.status,
+          message: datos.message || "No se pudo actualizar la reserva.",
+        };
+      }
+
+      return { ok: true, reserva: datos };
+    } catch {
+      return { ok: false, message: "Error de conexión con el servidor." };
+    }
+  }
+
+  // Cancelar una reserva confirmada antes del inicio
+  async function cancelarReserva(id) {
+    const reserva = reservas.find((r) => r.id === id);
+    const funcion = funciones.find((f) => f.id === reserva?.funcionId);
+
+    if (!reserva || !funcion || reserva.estado !== "confirmada") {
+      return { ok: false, message: "La reserva no se puede cancelar." };
+    }
+
+    if (new Date(`${funcion.fecha}T${funcion.hora}:00`) <= new Date()) {
+      return { ok: false, message: "La función ya comenzó." };
+    }
+
+    const resultado = await actualizarReserva(id, { estado: "cancelada" });
+
+    if (resultado.ok) {
+      setReservas((anteriores) =>
+        anteriores.map((r) => (r.id === id ? resultado.reserva : r)),
+      );
+    }
+
+    return resultado;
+  }
+
+  // Cambiar a otra función futura de la misma película
+  async function cambiarReserva(id, nuevaFuncionId, asientos) {
+    const reserva = reservas.find((r) => r.id === id);
+    const actual = funciones.find((f) => f.id === reserva?.funcionId);
+    const nueva = funciones.find((f) => f.id === nuevaFuncionId);
+
+    if (
+      !reserva ||
+      !actual ||
+      !nueva ||
+      reserva.estado !== "confirmada" ||
+      actual.movieId !== nueva.movieId ||
+      actual.id === nueva.id
+    ) {
+      return { ok: false, message: "No se puede cambiar esta función." };
+    }
+
+    const ahora = new Date();
+
+    if (
+      new Date(`${actual.fecha}T${actual.hora}:00`) <= ahora ||
+      new Date(`${nueva.fecha}T${nueva.hora}:00`) <= ahora
+    ) {
+      return { ok: false, message: "La función ya comenzó." };
+    }
+
+    if (
+      !Array.isArray(asientos) ||
+      asientos.length === 0 ||
+      asientos.length > 10 ||
+      new Set(asientos).size !== asientos.length
+    ) {
+      return {
+        ok: false,
+        message: "Seleccioná entre 1 y 10 asientos distintos.",
+      };
+    }
+
+    const resultado = await actualizarReserva(id, {
+      funcionId: nuevaFuncionId,
+      asientos,
+    });
+
+    if (resultado.ok) {
+      setReservas((anteriores) =>
+        anteriores.map((r) => (r.id === id ? resultado.reserva : r)),
+      );
+    }
+
+    return resultado;
+  }
 
   // Cambiar una reserva a otra función de la misma película
   function cambiarReserva(id, nuevaFuncionId, asientos) {
@@ -190,6 +465,8 @@ export function ReservasProvider({ children }) {
         cambiarReserva,
         cargandoReservas,
         errorReservas,
+        salas,
+        funciones,
       }}
     >
       {children}
