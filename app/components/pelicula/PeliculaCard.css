@@ -67,3 +67,23 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+.movie-card-favorito {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #c48a00;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #8a6100;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.movie-card-favorito:hover {
+  background: #fff6dc;
+}
+
+.movie-card-favorito.activo {
+  background: #c48a00;
+  color: #ffffff;
+}
