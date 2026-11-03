@@ -157,7 +157,11 @@ export default function MapaAsientos({ funcionId, reservaId }) {
       ))}
       </div>
 
-      <p>🟩 Libre | 🟦 Seleccionado | ⬛ Ocupado</p>
+      <ul className="leyenda">
+        <li><span className="muestra libre" /> Libre</li>
+        <li><span className="muestra seleccionado" /> Seleccionado</li>
+        <li><span className="muestra ocupado" /> Ocupado</li>
+      </ul>
 
       <h3>Resumen de la reserva</h3>
       <p>Asientos: {seleccionados.join(", ") || "Ninguno"}</p>
