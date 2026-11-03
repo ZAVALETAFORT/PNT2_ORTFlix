@@ -53,6 +53,32 @@ export default function MapaAsientos({ funcionId, reservaId }) {
 
   const [mensaje, setMensaje] = useState("");
 
+  // Datos de la película (póster y sinopsis) para mostrarlos al lado del mapa
+  const [pelicula, setPelicula] = useState(null);
+  const [peliculaError, setPeliculaError] = useState(false);
+  const movieId = funcion?.movieId;
+
+  useEffect(() => {
+    if (!movieId) return;
+    let activo = true;
+
+    fetch(`/api/peliculas/${movieId}`)
+      .then((res) => {
+        if (!res.ok) throw new Error("No se pudo consultar la película.");
+        return res.json();
+      })
+      .then((datos) => {
+        if (activo) setPelicula(datos);
+      })
+      .catch(() => {
+        if (activo) setPeliculaError(true);
+      });
+
+    return () => {
+      activo = false;
+    };
+  }, [movieId]);
+
   // Usa la disponibilidad de asientos
   const ocupadosActuales = cargando ? [] : ocupacionApi.asientos;
 
@@ -121,7 +147,8 @@ export default function MapaAsientos({ funcionId, reservaId }) {
   const columnas = Array.from({ length: sala.columnas }, (_, i) => i + 1);
 
   return (
-    <div>
+    <div className="reserva-layout">
+      <div>
       <h1>{funcion.titulo}</h1>
       <p>{funcion.fecha} - {funcion.hora} | {funcion.formato} | {funcion.idioma} | {sala.nombre}</p>
       <h2>Seleccioná tus asientos</h2>
@@ -182,6 +209,25 @@ export default function MapaAsientos({ funcionId, reservaId }) {
       </button>
 
       {mensaje && <p className="error">{mensaje}</p>}
+      </div>
+
+      <aside className="pelicula-panel">
+        {pelicula ? (
+          <>
+            {pelicula.poster && <img src={pelicula.poster} alt={pelicula.titulo} />}
+            <h2>{pelicula.titulo}</h2>
+            <p className="pelicula-datos">
+              {pelicula.fechaEstreno && `Estreno: ${new Date(`${pelicula.fechaEstreno}T00:00:00`).toLocaleDateString("es-AR")} | `}
+              Puntaje: {pelicula.puntaje ? pelicula.puntaje.toFixed(1) : "-"}
+            </p>
+            <p className="pelicula-sinopsis">{pelicula.sinopsis || "Sin descripción disponible."}</p>
+          </>
+        ) : (
+          <p className="pelicula-estado">
+            {peliculaError ? "No se pudo cargar la información de la película." : "Cargando película..."}
+          </p>
+        )}
+      </aside>
     </div>
   );
 }
