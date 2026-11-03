@@ -1,9 +1,20 @@
-// Borra y recrea las tablas con schema.sql y carga los mismos datos que src/data/mock.js
+// Borra y recrea las tablas con schema.sql y carga los datos de ejemplo.
+// Las funciones se arman con las películas en cartelera de TMDB; si TMDB no responde se usan las de src/data/mock.js.
 // Uso: npm run db:init
 import fs from "node:fs";
 import db from "../lib/db.js";
 import { hashPassword } from "../lib/auth.js";
-import { usuarios, credenciales, salas, funciones, reservas } from "../src/data/mock.js";
+import { usuarios, credenciales, salas, funciones as funcionesMock, reservas } from "../src/data/mock.js";
+import { traerPeliculas, armarFunciones } from "./funcionesTmdb.js";
+
+let funciones = funcionesMock;
+let origen = "el mock";
+try {
+  funciones = armarFunciones(await traerPeliculas());
+  origen = "las películas de TMDB";
+} catch (e) {
+  console.log(`No se pudo usar TMDB (${e.message}). Se usan las funciones del mock.`);
+}
 
 // Se borra en este orden porque unas tablas dependen de otras
 db.exec(`
@@ -48,6 +59,6 @@ for (const r of reservas) {
 }
 
 console.log(
-  `Base database/ortflix.db lista: ${usuarios.length} usuarios, ${salas.length} salas, ${funciones.length} funciones, ${reservas.length} reservas.`
+  `Base database/ortflix.db lista: ${usuarios.length} usuarios, ${salas.length} salas, ${funciones.length} funciones (con ${origen}), ${reservas.length} reservas.`
 );
 db.close();

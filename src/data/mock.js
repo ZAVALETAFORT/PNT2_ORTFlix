@@ -3,7 +3,7 @@
 
 // Fecha de hoy + N días ("AAAA-MM-DD"), así las funciones de ejemplo nunca quedan en el pasado.
 // Hay que volver a correr npm run db:init para que se recalculen.
-function enDias(dias) {
+export function enDias(dias) {
   const fecha = new Date();
   fecha.setDate(fecha.getDate() + dias);
   return fecha.toLocaleDateString("en-CA");

@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "db:init": "node --no-warnings database/initDb.js"
+    "db:init": "node --no-warnings --env-file-if-exists=.env database/initDb.js"
   },
   "dependencies": {
     "next": "^16.4.3",
