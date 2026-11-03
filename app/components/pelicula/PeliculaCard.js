@@ -1,14 +1,15 @@
 import './PeliculaCard.css';
 
 
-const IMG_URL = 'https://image.tmdb.org/t/p/w500';
+export const IMG_URL = 'https://image.tmdb.org/t/p/w500';
 
 function formatearFecha(fecha) {
   if (!fecha) return 'Fecha no disponible';
   return new Date(`${fecha}T00:00:00`).toLocaleDateString('es-AR');
 }
 
-export default function PeliculaCard({ movie }) {
+// El botón de favorito aparece solo si la lista le pasa onFavorito
+export default function PeliculaCard({ movie, esFavorita = false, onFavorito }) {
   return (
     <div className="movie-card">
       {movie.poster_path ? (
@@ -21,6 +22,16 @@ export default function PeliculaCard({ movie }) {
         <p className="movie-card-fecha">Estreno: {formatearFecha(movie.release_date)}</p>
         <p className="movie-card-rating">Puntaje: {movie.vote_average?.toFixed(1) ?? '-'}</p>
         {/* <p className="movie-card-descripcion">{movie.overview || 'Sin descripción disponible.'}</p> */}
+        {onFavorito && (
+          <button
+            type="button"
+            className={`movie-card-favorito${esFavorita ? ' activo' : ''}`}
+            aria-pressed={esFavorita}
+            onClick={() => onFavorito(movie)}
+          >
+            {esFavorita ? 'Quitar de favoritos' : 'Agregar a favoritos'}
+          </button>
+        )}
       </div>
     </div>
   );
