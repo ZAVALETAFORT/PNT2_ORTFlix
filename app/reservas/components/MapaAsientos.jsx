@@ -127,7 +127,8 @@ export default function MapaAsientos({ funcionId, reservaId }) {
       <h2>Seleccioná tus asientos</h2>
       {cargando && <p>Cargando disponibilidad...</p>}
       {errorOcupacion && <p className="error" role="alert">{errorOcupacion}</p>}
-      <p className="pantalla">PANTALLA</p>
+      <div className="sala">
+      <div className="pantalla">PANTALLA</div>
 
       {filas.map((fila) => (
         <div key={fila} className="fila">
@@ -154,6 +155,7 @@ export default function MapaAsientos({ funcionId, reservaId }) {
           })}
         </div>
       ))}
+      </div>
 
       <p>🟩 Libre | 🟦 Seleccionado | ⬛ Ocupado</p>
 
