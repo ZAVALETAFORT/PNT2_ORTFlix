@@ -1,11 +1,106 @@
+/* Paleta y estilos compartidos de ORTFlix.
+   Las demás hojas usan estas variables en vez de colores sueltos: si hay que cambiar un color, se cambia acá. */
+:root {
+  --color-primario: #2b4bee;
+  --color-primario-oscuro: #1f3ad1;
+  --color-primario-suave: #e8ecff;
+  --color-fondo: #f7f7f8;
+  --color-superficie: #ffffff;
+  --color-texto: #1a1a1a;
+  --color-texto-suave: #475569;
+  --color-borde: #e2e8f0;
+  --color-borde-fuerte: #cbd5e1;
+  --color-peligro: #b91c1c;
+  --color-peligro-suave: #fee2e2;
+  --color-exito: #166534;
+  --color-exito-suave: #dcfce7;
+  --color-acento: #b45309; /* el puntaje de las películas */
+  --radio: 8px;
+  --radio-grande: 12px;
+}
+
 * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
-  
-  body {
-    background: #f7f7f8;
-    color: #1a1a1a;
-    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  }
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--color-fondo);
+  color: var(--color-texto);
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+a {
+  color: var(--color-primario);
+}
+
+/* Contenedor y título que comparten las pantallas */
+.contenedor {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.titulo-pagina {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+/* Mensajes */
+.mensaje-error {
+  color: var(--color-peligro);
+  background: var(--color-peligro-suave);
+  padding: 10px 14px;
+  border-radius: var(--radio);
+}
+
+/* Botones: .boton es el principal; se combina con .boton-secundario o .boton-peligro */
+.boton {
+  padding: 8px 14px;
+  border: 1px solid var(--color-primario);
+  border-radius: var(--radio);
+  background: var(--color-primario);
+  color: #ffffff;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.boton:hover {
+  background: var(--color-primario-oscuro);
+  border-color: var(--color-primario-oscuro);
+}
+
+.boton:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.boton.boton-secundario {
+  background: var(--color-superficie);
+  color: var(--color-primario);
+}
+
+.boton.boton-secundario:hover {
+  background: var(--color-primario-suave);
+}
+
+.boton.boton-peligro {
+  background: var(--color-superficie);
+  border-color: var(--color-peligro);
+  color: var(--color-peligro);
+}
+
+.boton.boton-peligro:hover {
+  background: var(--color-peligro);
+  color: #ffffff;
+}
+
+/* Para que el teclado también vea qué está seleccionado */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--color-primario);
+  outline-offset: 2px;
+}

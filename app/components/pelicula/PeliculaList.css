@@ -21,27 +21,28 @@
   max-width: 400px;
   padding: 10px 14px;
   margin-bottom: 24px;
-  border: 1px solid #333;
-  border-radius: 8px;
-  background: #1b1b24;
-  color: #f1f1f1;
+  border: 1px solid var(--color-borde-fuerte);
+  border-radius: var(--radio);
+  background: var(--color-superficie);
+  color: var(--color-texto);
   font-size: 15px;
 }
 
 .pelicula-list-buscador:focus {
   outline: none;
-  border-color: #f5c518;
+  border-color: var(--color-primario);
 }
 
 .pelicula-list-mensaje {
-  color: #999;
+  color: var(--color-texto-suave);
   text-align: center;
   padding: 40px 0;
 }
 
 .pelicula-list-error {
-  color: #ff6b6b;
-  background: #2a1515;
+  color: var(--color-peligro);
+  background: var(--color-peligro-suave);
   padding: 12px 16px;
-  border-radius: 8px;
+  border-radius: var(--radio);
+  margin-bottom: 16px;
 }

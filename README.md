@@ -189,6 +189,7 @@ reserva = { id, usuarioId, funcionId, asientos, estado, fechaCreacion }
 | PUT | `/api/funciones/[id]` | admin | Modifica una función |
 | DELETE | `/api/funciones/[id]` | admin | Borra una función |
 | GET | `/api/funciones/[id]/asientos-ocupados` | público | `["A1","B4"]` |
+| GET | `/api/peliculas/[id]` | público | Datos de una película de TMDB: `{ id, titulo, sinopsis, poster, fechaEstreno, puntaje }` |
 | GET | `/api/reservas` | token | Reservas del usuario logueado |
 | POST | `/api/reservas` | token | Body `{ funcionId, asientos }` |
 | PUT | `/api/reservas/[id]` | token | `{ estado: "cancelada" }` o `{ funcionId, asientos }` |
