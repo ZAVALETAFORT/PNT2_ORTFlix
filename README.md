@@ -222,7 +222,7 @@ La base es **SQLite en un archivo** (`database/ortflix.db`, ignorado por git). S
 | Archivo | Para qué sirve |
 | --- | --- |
 | `database/schema.sql` | Las tablas: `usuarios`, `salas`, `funciones`, `reservas`, `reserva_asientos` y `favoritos` |
-| `database/initDb.js` | Borra y recrea las tablas y carga los datos de ejemplo (las funciones salen de TMDB, el resto de `src/data/mock.js`) |
+| `database/initDb.js` | Recrea salas, funciones y reservas con datos de ejemplo (las funciones salen de TMDB, el resto de `src/data/mock.js`) y conserva usuarios y favoritos |
 | `database/funcionesTmdb.js` | Trae las películas en cartelera de TMDB (las funciones las arma `armarFunciones` de `src/data/mock.js`) |
 | `lib/db.js` | Conexión a la base, la usan todos los endpoints |
 | `lib/auth.js`, `lib/api.js`, `lib/validar.js` | Funciones de ayuda de los endpoints |
@@ -235,7 +235,18 @@ Los endpoints son Route Handlers de Next en `app/api/`.
 npm run db:init
 ```
 
-Borra y recrea las tablas y carga 2 usuarios, 2 salas, las funciones y 2 reservas de ejemplo. Las funciones se arman con las 8 primeras películas en cartelera de TMDB (2 o 3 funciones cada una, en los próximos 7 días); para eso usa `TMDB_TOKEN` y `TMDB_BASE_URL` del `.env`. Si TMDB no responde, usa las funciones de `src/data/mock.js` y lo avisa por consola. Se puede correr de nuevo cuando se quiera volver al estado inicial, y conviene hacerlo cada tanto para que las fechas no queden en el pasado. Después, `npm run dev` y la API queda en `http://localhost:3000/api/...`.
+Recrea las salas, las funciones y las reservas, y carga 2 salas, las funciones y 2 reservas de ejemplo. Las funciones se arman con las 8 primeras películas en cartelera de TMDB (2 o 3 funciones cada una, en los próximos 7 días); para eso usa `TMDB_TOKEN` y `TMDB_BASE_URL` del `.env`. Si TMDB no responde, usa las funciones de `src/data/mock.js` y lo avisa por consola.
+
+**Qué se conserva y qué no:**
+
+| Tabla | Al correr `npm run db:init` |
+| --- | --- |
+| `usuarios` (con su rol) | Se conserva. Los usuarios de ejemplo se agregan solo si faltan y vuelven con su rol (`admin@ortflix.com` siempre admin). |
+| `favoritos` | Se conserva. |
+| `salas`, `funciones` | Se recrean con fechas nuevas. |
+| `reservas`, `reserva_asientos` | Se recrean (cuelgan de las funciones, que cambian). Quedan solo las 2 de ejemplo. |
+
+Conviene correrlo cada tanto para que las fechas de las funciones no queden en el pasado. Para **borrar todo** (usuarios y favoritos incluidos) usar `npm run db:init -- --todo`; también hace falta cuando el esquema de `schema.sql` cambia y el script avisa que la tabla `usuarios` es de una versión vieja. Después, `npm run dev` y la API queda en `http://localhost:3000/api/...`.
 
 `NEXT_PUBLIC_API_URL` tiene que seguir apuntando al **backend del profesor** (no a `localhost:3000`): ahí se hacen el registro y el login. Opcional: `AUTH_API_URL` en `.env` para cambiar el backend con el que nuestra API valida el token (por defecto es el mismo del profesor).
 
