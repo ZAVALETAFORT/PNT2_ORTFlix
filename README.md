@@ -223,7 +223,7 @@ La base es **SQLite en un archivo** (`database/ortflix.db`, ignorado por git). S
 | --- | --- |
 | `database/schema.sql` | Las tablas: `usuarios`, `salas`, `funciones`, `reservas`, `reserva_asientos` y `favoritos` |
 | `database/initDb.js` | Borra y recrea las tablas y carga los datos de ejemplo (las funciones salen de TMDB, el resto de `src/data/mock.js`) |
-| `database/funcionesTmdb.js` | Trae las películas en cartelera de TMDB y les arma las funciones |
+| `database/funcionesTmdb.js` | Trae las películas en cartelera de TMDB (las funciones las arma `armarFunciones` de `src/data/mock.js`) |
 | `lib/db.js` | Conexión a la base, la usan todos los endpoints |
 | `lib/auth.js`, `lib/api.js`, `lib/validar.js` | Funciones de ayuda de los endpoints |
 

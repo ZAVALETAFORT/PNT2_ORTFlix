@@ -4,8 +4,8 @@
 import fs from "node:fs";
 import db from "../lib/db.js";
 import { hashPassword } from "../lib/auth.js";
-import { usuarios, credenciales, salas, funciones as funcionesMock, reservas } from "../src/data/mock.js";
-import { traerPeliculas, armarFunciones } from "./funcionesTmdb.js";
+import { usuarios, credenciales, salas, funciones as funcionesMock, reservas, armarFunciones } from "../src/data/mock.js";
+import { traerPeliculas } from "./funcionesTmdb.js";
 
 let funciones = funcionesMock;
 let origen = "el mock";
