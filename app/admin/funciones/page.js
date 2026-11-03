@@ -5,7 +5,7 @@ import { useFunciones } from "./FuncionesContext";
 import { proximosDias } from "@/app/components/funcion/fechas";
 
 export default function FuncionesAdminPage() {
-  const { funciones, salas } = useFunciones();
+  const { funciones, salas, cargando, error } = useFunciones();
   const [dias, setDias] = useState([]);
   const [diaSeleccionado, setDiaSeleccionado] = useState("");
 
@@ -41,9 +41,13 @@ export default function FuncionesAdminPage() {
         ))}
       </div>
 
-      {delDia.length === 0 ? (
-        <p>No hay funciones para este día</p>
-      ) : (
+      {cargando && <p>Cargando funciones...</p>}
+
+      {error && <p className="aviso-error">{error}</p>}
+
+      {!cargando && !error && delDia.length === 0 && <p>No hay funciones para este día</p>}
+
+      {!cargando && !error && delDia.length > 0 && (
         <table className="tabla-funciones">
           <thead>
             <tr>
