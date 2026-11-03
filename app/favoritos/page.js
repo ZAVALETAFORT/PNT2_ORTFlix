@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import "./favoritos.css";
 
 export default function MisFavoritos() {
   const [usuarioId, setUsuarioId] = useState(null);
@@ -53,29 +54,29 @@ export default function MisFavoritos() {
   }
 
   return (
-    <main style={{ maxWidth: 800, margin: "0 auto", padding: 20 }}>
-      <h1>Mis favoritos</h1>
+    <main className="contenedor">
+      <h1 className="titulo-pagina">Mis favoritos</h1>
 
       {cargando && <p>Cargando favoritos...</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && <p className="mensaje-error">{error}</p>}
 
       {!cargando && favoritos.length === 0 && !error && (
         <p>Todavía no tenés favoritos.</p>
       )}
 
-      <ul style={{ listStyle: "none", padding: 0 }}>
+      <ul className="favoritos-lista">
         {favoritos.map((favorito) => (
-          <li key={favorito.id} style={{ border: "1px solid #ccc", padding: 12, marginBottom: 12, borderRadius: 8 }}>
+          <li key={favorito.id} className="favorito">
             <h2>{favorito.titulo}</h2>
-            {favorito.poster && <img src={favorito.poster} alt={favorito.titulo} style={{ width: 120 }} />}
-            {favorito.puntaje !== null && <p>Puntaje: {favorito.puntaje}</p>}
-            {favorito.nota && <p>Nota: {favorito.nota}</p>}
-            <button onClick={() => eliminar(favorito)}>Eliminar</button>
+            {favorito.poster && <img src={favorito.poster} alt={favorito.titulo} />}
+            {favorito.puntaje !== null && <p className="favorito-puntaje">Puntaje: {favorito.puntaje}</p>}
+            {favorito.nota && <p className="favorito-nota">Nota: {favorito.nota}</p>}
+            <button className="boton boton-peligro" onClick={() => eliminar(favorito)}>Eliminar</button>
           </li>
         ))}
       </ul>
 
-      <p>
+      <p className="favoritos-volver">
         <Link href="/">Volver a cartelera</Link>
       </p>
     </main>
