@@ -275,6 +275,22 @@ Borra y recrea las tablas y carga los mismos datos que `src/data/mock.js` (2 usu
 
 **GET `/api/funciones/[id]/asientos-ocupados`** → `["A1","A2"]` (solo de reservas confirmadas).
 
+### Usuarios
+
+**GET `/api/usuarios`** → lista de `usuario`.
+**GET `/api/usuarios/[id]`** → un `usuario`. `404` si no existe.
+**POST `/api/usuarios`** — body `{ "nombre", "email", "password", "rol" }` → `201`. `400` si faltan datos, `409` si el email ya existe.
+**PUT `/api/usuarios/[id]`** — body (campos opcionales) → `200`. `404` si no existe, `409` si el email ya existe.
+**DELETE `/api/usuarios/[id]`** → `200`. `404` si no existe.
+
+### Favoritos
+
+**GET `/api/favoritos/[usuarioId]`** → favoritos de un usuario.
+**POST `/api/favoritos/[usuarioId]`** — body `{ "movieId", "titulo", "poster?", "puntaje?", "nota?" }` → `201`. `400` si faltan datos, `404` si el usuario no existe, `409` si ya está en favoritos.
+**GET `/api/favoritos/[usuarioId]/[movieId]`** → un favorito.
+**PUT `/api/favoritos/[usuarioId]/[movieId]`** — body (campos opcionales) → `200`.
+**DELETE `/api/favoritos/[usuarioId]/[movieId]`** → `200`.
+
 ### Reservas
 
 **GET `/api/reservas`** (token) → reservas del usuario logueado:

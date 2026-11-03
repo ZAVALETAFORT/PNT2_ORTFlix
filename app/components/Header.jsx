@@ -39,6 +39,9 @@ export default function Header() {
             <Link href="/reservas" className={estilos.link}>
               Mis reservas
             </Link>
+            <Link href="/favoritos" className={estilos.link}>
+              Mis favoritos
+            </Link>
             {user.rol === "admin" && (
               <Link href="/admin/funciones" className={estilos.link}>
                 Administrar funciones
