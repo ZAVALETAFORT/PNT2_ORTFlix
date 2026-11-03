@@ -26,9 +26,9 @@ export default async function Home() {
   }
 
   return (
-    <main style={{ padding: 16 }}>
-      <h1>ORTFlix - En cartelera</h1>
-      {error ? <p style={{ color: 'red' }}>{error}</p> : <PeliculaList peliculas={peliculas} />}
+    <main className="contenedor">
+      <h1 className="titulo-pagina">ORTFlix - En cartelera</h1>
+      {error ? <p className="mensaje-error">{error}</p> : <PeliculaList peliculas={peliculas} />}
     </main>
   );
 }
