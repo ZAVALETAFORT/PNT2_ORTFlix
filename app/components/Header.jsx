@@ -1,0 +1,67 @@
+"use client";
+
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import estilos from "./Header.module.css";
+
+export default function Header() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const [user, setUser] = useState(null);
+
+  // Lee la sesión de localStorage. Se vuelve a leer cada vez que cambia la ruta
+  // (así el header se actualiza después de iniciar o cerrar sesión).
+  useEffect(() => {
+    // localStorage solo existe en el navegador: hay que leerlo en un efecto
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setUser(JSON.parse(localStorage.getItem("user")));
+  }, [pathname]);
+
+  function cerrarSesion() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("userEmail");
+    setUser(null);
+    router.push("/login");
+  }
+
+  return (
+    <header className={estilos.header}>
+      <Link href="/" className={estilos.logo}>
+        ORTFlix
+      </Link>
+
+      <nav className={estilos.nav}>
+        {user ? (
+          <>
+            <span>Hola, {user.username}</span>
+            <Link href="/reservas" className={estilos.link}>
+              Mis reservas
+            </Link>
+            <Link href="/favoritos" className={estilos.link}>
+              Mis favoritos
+            </Link>
+            {user.rol === "admin" && (
+              <Link href="/admin/funciones" className={estilos.link}>
+                Administrar funciones
+              </Link>
+            )}
+            <button className={estilos.boton} onClick={cerrarSesion}>
+              Cerrar sesión
+            </button>
+          </>
+        ) : (
+          <>
+            <Link href="/login" className={estilos.link}>
+              Ingresar
+            </Link>
+            <Link href="/register" className={estilos.link}>
+              Registrarse
+            </Link>
+          </>
+        )}
+      </nav>
+    </header>
+  );
+}

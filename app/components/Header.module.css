@@ -1,0 +1,35 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-bottom: 1px solid #e2e8f0;
+  background-color: #fff;
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: 700;
+  color: #2b4bee;
+  text-decoration: none;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.link {
+  color: #334155;
+  text-decoration: none;
+}
+
+.boton {
+  padding: 8px 14px;
+  background: #2b4bee;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
