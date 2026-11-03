@@ -4,7 +4,6 @@ const nextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
   reactCompiler: true,
-  agentRules: false,
 };
 
 export default nextConfig;
