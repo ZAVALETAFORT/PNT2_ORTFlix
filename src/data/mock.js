@@ -19,10 +19,10 @@ export const salas = [
 
 // movieId = id de la película en TMDB (en cartel en Argentina)
 export const funciones = [
-  { id: 1, movieId: 1400940, titulo: "Clayface", salaId: 1, fecha: "2026-10-28", hora: "20:30", formato: "3D", idioma: "Subtitulada", precio: 9500 },
-  { id: 2, movieId: 1423191, titulo: "Resident Evil", salaId: 2, fecha: "2026-10-29", hora: "22:00", formato: "4D", idioma: "Castellano", precio: 12000 },
-  { id: 3, movieId: 1153576, titulo: "Street Fighter", salaId: 1, fecha: "2026-10-30", hora: "18:00", formato: "2D", idioma: "Subtitulada", precio: 8000 },
-  { id: 4, movieId: 1058424, titulo: "Hope", salaId: 2, fecha: "2026-11-02", hora: "21:15", formato: "2D", idioma: "Castellano", precio: 8000 },
+  { id: 1, movieId: 1400940, titulo: "Clayface", salaId: 1, fecha: "2026-11-03", hora: "20:30", formato: "3D", idioma: "Subtitulada", precio: 9500 },
+  { id: 2, movieId: 1423191, titulo: "Resident Evil", salaId: 2, fecha: "2026-11-03", hora: "22:00", formato: "4D", idioma: "Castellano", precio: 12000 },
+  { id: 3, movieId: 1153576, titulo: "Street Fighter", salaId: 1, fecha: "2026-11-04", hora: "18:00", formato: "2D", idioma: "Subtitulada", precio: 8000 },
+  { id: 4, movieId: 1058424, titulo: "Hope", salaId: 2, fecha: "2026-11-06", hora: "21:15", formato: "2D", idioma: "Castellano", precio: 8000 },
 ];
 
 export const reservas = [
