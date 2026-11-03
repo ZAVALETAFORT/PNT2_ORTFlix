@@ -55,8 +55,8 @@ export default function FuncionesAdminPage() {
   if (dias.length === 0) return null;
 
   return (
-    <main className="admin-funciones">
-      <h1>Funciones</h1>
+    <main className="contenedor">
+      <h1 className="titulo-pagina">Funciones</h1>
 
       <div className="filtro-dias">
         {dias.map((d) => (
@@ -70,11 +70,11 @@ export default function FuncionesAdminPage() {
         ))}
       </div>
 
-      {aviso && <p className="aviso-error">{aviso}</p>}
+      {aviso && <p className="mensaje-error">{aviso}</p>}
 
       {cargando && <p>Cargando funciones...</p>}
 
-      {error && <p className="aviso-error">{error}</p>}
+      {error && <p className="mensaje-error">{error}</p>}
 
       {!cargando && !error && delDia.length === 0 && <p>No hay funciones para este día</p>}
 
@@ -106,11 +106,11 @@ export default function FuncionesAdminPage() {
                   {confirmandoId === f.id ? (
                     <span>
                       ¿Seguro?{" "}
-                      <button className="btn-peligro" onClick={() => cancelar(f)}>Sí</button>{" "}
-                      <button className="btn-secundario" onClick={() => setConfirmandoId(null)}>No</button>
+                      <button className="boton boton-peligro" onClick={() => cancelar(f)}>Sí</button>{" "}
+                      <button className="boton boton-secundario" onClick={() => setConfirmandoId(null)}>No</button>
                     </span>
                   ) : (
-                    <button className="btn-peligro" onClick={() => setConfirmandoId(f.id)}>
+                    <button className="boton boton-peligro" onClick={() => setConfirmandoId(f.id)}>
                       Cancelar función
                     </button>
                   )}
