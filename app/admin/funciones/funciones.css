@@ -39,3 +39,24 @@
     margin: 12px 0;
     color: #e50914;
 }
+
+.btn-peligro {
+    padding: 4px 10px;
+    border: 1px solid #e50914;
+    background: transparent;
+    color: #e50914;
+    border-radius: 6px;
+    cursor: pointer;
+}
+.btn-peligro:hover {
+    background: #e50914;
+    color: #fff;
+}
+.btn-secundario {
+    padding: 4px 10px;
+    border: 1px solid #555;
+    background: transparent;
+    color: inherit;
+    border-radius: 6px;
+    cursor: pointer;
+}
