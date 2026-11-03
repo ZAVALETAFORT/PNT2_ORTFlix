@@ -1,16 +1,26 @@
-/* Estilos de reservas y del mapa de asientos. */
-.reservas { padding: 20px; }
-.reservas .reserva { border: 1px solid #aaa; padding: 15px; margin-top: 15px; }
+/* Estilos de reservas y del mapa de asientos. Los colores salen de la paleta de global.css. */
+.reservas { max-width: 1200px; margin: 0 auto; padding: 24px 16px; }
+.reservas .reserva { border: 1px solid var(--color-borde); background: var(--color-superficie); border-radius: var(--radio-grande); padding: 16px; margin-top: 16px; }
 .reservas .volver { margin-top: 20px; }
 .reservas .acciones { margin-top: 10px; }
 .reservas .acciones button { margin-right: 8px; }
 .reservas .pantalla { text-align: center; margin: 12px 0; }
 .reservas .fila { display: flex; gap: 5px; margin-bottom: 5px; }
 .reservas .fila strong { width: 25px; flex-shrink: 0; }
-.reservas .asiento { width: 38px; height: 38px; flex-shrink: 0; background: #90ee90; color: #111; }
-.reservas .asiento.seleccionado { background: #2196f3; }
-.reservas .asiento.ocupado { background: #888; cursor: not-allowed; }
+
+/* Botones de las reservas */
+.reservas button { padding: 8px 14px; border: 1px solid var(--color-primario); border-radius: var(--radio); background: var(--color-primario); color: #fff; cursor: pointer; }
+.reservas button:hover:not(:disabled) { background: var(--color-primario-oscuro); }
+.reservas button:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* Asientos: libre, seleccionado y ocupado */
+.reservas .asiento { width: 38px; height: 38px; flex-shrink: 0; padding: 0; background: var(--color-exito-suave); border-color: var(--color-exito); color: var(--color-texto); }
+.reservas .asiento:hover:not(:disabled) { background: var(--color-exito-suave); border-color: var(--color-primario); }
+.reservas .asiento.seleccionado { background: var(--color-primario); border-color: var(--color-primario); color: #fff; }
+.reservas .asiento.ocupado { background: var(--color-borde-fuerte); border-color: var(--color-borde-fuerte); color: var(--color-texto-suave); opacity: 1; cursor: not-allowed; }
 .reservas .confirmar { padding: 10px; margin-top: 10px; }
-.reservas .estado-confirmada { color: #166534; }
-.reservas .estado-cancelada, .reservas .error { color: #b91c1c; }
-.reservas .estado-finalizada { color: #666; }
+
+/* Estados */
+.reservas .estado-confirmada { color: var(--color-exito); }
+.reservas .estado-cancelada, .reservas .error { color: var(--color-peligro); }
+.reservas .estado-finalizada { color: var(--color-texto-suave); }
