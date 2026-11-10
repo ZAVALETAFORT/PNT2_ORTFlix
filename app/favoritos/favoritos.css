@@ -37,3 +37,17 @@
 .favoritos-volver {
   margin-top: 24px;
 }
+
+.favorito-nota-campo {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--color-borde-fuerte);
+  border-radius: var(--radio);
+  font: inherit;
+  resize: vertical;
+}
+
+.favorito-acciones {
+  display: flex;
+  gap: 8px;
+}
