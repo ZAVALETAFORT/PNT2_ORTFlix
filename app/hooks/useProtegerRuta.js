@@ -1,28 +1,27 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "../components/AuthProvider";
 
-// Protege una página según la sesión guardada en localStorage.
+// Protege una página según la sesión del contexto (AuthProvider).
 // Uso: const autorizado = useProtegerRuta();         -> requiere sesión (si no hay, va a /login)
 //      const autorizado = useProtegerRuta("admin");  -> requiere rol admin (si no lo es, va al home)
 export function useProtegerRuta(rolRequerido) {
   const router = useRouter();
-  const [autorizado, setAutorizado] = useState(false);
+  const { usuario, cargando } = useAuth();
+
+  const autorizado = !cargando && !!usuario && (!rolRequerido || usuario.rol === rolRequerido);
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
+    if (cargando) return; // todavía se está leyendo la sesión
 
-    if (!user) {
+    if (!usuario) {
       router.push("/login");
-    } else if (rolRequerido && user.rol !== rolRequerido) {
+    } else if (rolRequerido && usuario.rol !== rolRequerido) {
       router.push("/");
-    } else {
-      // localStorage solo existe en el navegador: hay que leerlo en un efecto
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setAutorizado(true);
     }
-  }, [router, rolRequerido]);
+  }, [cargando, usuario, rolRequerido, router]);
 
   return autorizado;
 }
