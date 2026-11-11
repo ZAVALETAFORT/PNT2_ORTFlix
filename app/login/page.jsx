@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "../components/AuthProvider";
 import estilos from "./page.module.css";
 
 // La URL del backend viene de .env.local (NEXT_PUBLIC_API_URL)
@@ -10,6 +11,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function LoginPage() {
   const router = useRouter();
+  const { guardarSesion } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -52,10 +54,8 @@ export default function LoginPage() {
 
       const usuario = await responseMe.json();
 
-      // Se guarda la sesión con las claves del contrato (README), agregando el rol
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify({ ...data.user, rol: usuario.rol }));
-      localStorage.setItem("userEmail", data.user.email);
+      // Se guarda la sesión en el contexto (y en localStorage), agregando el rol
+      guardarSesion(data.token, { ...data.user, rol: usuario.rol });
 
       router.push("/");
     } catch {

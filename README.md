@@ -204,6 +204,18 @@ Los endpoints con token requieren el header `Authorization: Bearer <token>`. El 
 | `user` | Usuario que devuelve ese login (`JSON.stringify`): `{ _id, username, email }`. El rol se consulta con `GET /api/users/me` |
 | `userEmail` | Email del usuario logueado (string) |
 
+### Sesión en el front (`AuthProvider`)
+
+La sesión es un estado global: el `AuthProvider` (`app/components/AuthProvider.jsx`) está montado en el layout y guarda el usuario y el token. Se mantiene al recargar la página porque también se escribe en `localStorage` con las claves de arriba. **Las pantallas nuevas deben leer la sesión con `useAuth()` y no con `localStorage`:**
+
+```js
+const { usuario, token, cargando, guardarSesion, cerrarSesion } = useAuth();
+// usuario: { _id, username, email, rol } o null si no hay sesión
+// cargando: true hasta que se leyó la sesión guardada
+```
+
+Para proteger una página: `const autorizado = useProtegerRuta();` (exige sesión, si no manda a `/login`) o `useProtegerRuta("admin")` (exige rol admin, si no manda al home). Mientras `autorizado` sea `false` hay que mostrar "Cargando...".
+
 ### Datos de prueba (mock)
 
 Mientras no esté el backend, importar los datos de `src/data/mock.js`:
@@ -443,7 +455,7 @@ El proyecto se desarrolla de forma incremental mediante GitHub Issues, ramas ind
 - [X]  Repositorio GitHub y ramas de trabajo.
 - [X]  Integración con TMDB.
 - [X]  Estructura inicial SQLite.
-- [ ]  API REST propia y persistencia completa.
+- [X]  API REST propia y persistencia completa.
 - [ ]  Integración y pruebas generales.
 
 **Autenticación y usuarios**
@@ -452,9 +464,10 @@ El proyecto se desarrolla de forma incremental mediante GitHub Issues, ramas ind
 - [X]  Login y Logout.
 - [X]  Validaciones de formularios.
 - [X]  Integración inicial con backend externo.
-- [ ]  Sistema de roles (Administrador y Cliente).
+- [X]  Estado global de sesión (`AuthProvider`).
+- [X]  Sistema de roles (Administrador y Cliente).
 - [ ]  Protección de rutas según permisos.
-- [ ]  Integración de autenticación con SQLite.
+- [X]  Integración de autenticación con SQLite.
 
 **Cartelera y películas**
 
@@ -467,9 +480,9 @@ El proyecto se desarrolla de forma incremental mediante GitHub Issues, ramas ind
 **Gestión del cine**
 
 - [ ]  ABM de funciones.
-- [ ]  ABM de reservas.
-- [ ]  Selección de asientos.
-- [ ]  Prevención de reservas duplicadas.
+- [X]  ABM de reservas.
+- [X]  Selección de asientos.
+- [X]  Prevención de reservas duplicadas.
 - [ ]  ABM de favoritos.
 - [ ]  ABM de empleados.
 - [ ]  Incorporación del rol Empleado.
@@ -484,10 +497,10 @@ El proyecto se desarrolla de forma incremental mediante GitHub Issues, ramas ind
 - [ ]  Acceder al detalle de una película.
 - [ ]  Seleccionar función, día y horario.
 - [ ]  Seleccionar formato (2D, 3D o 4D).
-- [ ]  Visualizar asientos disponibles y ocupados.
-- [ ]  Seleccionar y confirmar una reserva.
-- [ ]  Impedir reservar dos veces el mismo asiento para una función.
-- [ ]  Consultar las reservas realizadas.
+- [X]  Visualizar asientos disponibles y ocupados.
+- [X]  Seleccionar y confirmar una reserva.
+- [X]  Impedir reservar dos veces el mismo asiento para una función.
+- [X]  Consultar las reservas realizadas.
 
 ---
 
@@ -497,14 +510,15 @@ El proyecto se desarrolla de forma incremental mediante GitHub Issues, ramas ind
 | Funcionalidad             | Estado                               |
 | --------------------------- | -------------------------------------- |
 | Login, Registro y Logout  | ✅ Integrado                         |
+| Estado global de sesión   | ✅ Integrado                         |
 | Cartelera TMDB y buscador | ✅ Integrado, con ajustes pendientes |
 | Estructura inicial SQLite | ✅ Integrado                         |
 | Detalle de película      | ⏳ Pendiente                         |
-| Sistema de roles          | ⏳ Pendiente                         |
-| ABM de funciones          | ⏳ Pendiente                         |
-| Reservas y asientos       | ⏳ Pendiente                         |
-| API REST propia           | ⏳ Pendiente                         |
-| ABM Favoritos y Empleados | ⏳ Pendiente                         |
+| Sistema de roles          | ✅ Integrado                         |
+| ABM de funciones          | 🔄 En curso (listado y cancelar)     |
+| Reservas y asientos       | ✅ Integrado                         |
+| API REST propia           | ✅ Integrado                         |
+| ABM Favoritos y Empleados | 🔄 Favoritos en curso, Empleados pendiente |
 
 
 **Criterio de finalización:** cada funcionalidad debe estar implementada, probada y fusionada en `develop`
