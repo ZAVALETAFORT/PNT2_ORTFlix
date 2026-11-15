@@ -10,7 +10,7 @@
     "db:init": "node --no-warnings --env-file-if-exists=.env database/initDb.js"
   },
   "dependencies": {
-    "next": "^16.4.3",
+    "next": "^16.4.6",
     "react": "19.3.0",
     "react-dom": "19.3.0"
   },
