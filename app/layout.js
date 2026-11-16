@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Header from "./components/Header";
 import { AuthProvider } from "./components/AuthProvider";
 import "./global.css";
@@ -7,7 +8,6 @@ export const metadata = {
   title: "ORTFlix",
   description: "Cartelera de cine",
 };
-//rama
 
 export default function RootLayout({ children }) {
   return (
@@ -15,11 +15,11 @@ export default function RootLayout({ children }) {
       <body>
         <AuthProvider>
           <Header />
-          <ReservasProvider>
-
-            {children}
-
-          </ReservasProvider>
+          {/* ReservasProvider y algunas páginas leen la URL (usePathname, useParams): ese dato
+              recién existe cuando entra el usuario, así que Next pide envolverlos en Suspense */}
+          <Suspense fallback={<p className="contenedor">Cargando...</p>}>
+            <ReservasProvider>{children}</ReservasProvider>
+          </Suspense>
         </AuthProvider>
       </body>
     </html>
