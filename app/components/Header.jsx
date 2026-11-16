@@ -1,28 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { useAuth } from "./AuthProvider";
 import estilos from "./Header.module.css";
 
 export default function Header() {
   const router = useRouter();
-  const pathname = usePathname();
-  const [user, setUser] = useState(null);
+  // La sesión sale del contexto: cuando alguien inicia o cierra sesión, el header se actualiza solo
+  const { usuario: user, cerrarSesion } = useAuth();
 
-  // Lee la sesión de localStorage. Se vuelve a leer cada vez que cambia la ruta
-  // (así el header se actualiza después de iniciar o cerrar sesión).
-  useEffect(() => {
-    // localStorage solo existe en el navegador: hay que leerlo en un efecto
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setUser(JSON.parse(localStorage.getItem("user")));
-  }, [pathname]);
-
-  function cerrarSesion() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    localStorage.removeItem("userEmail");
-    setUser(null);
+  function salir() {
+    cerrarSesion();
     router.push("/login");
   }
 
@@ -47,7 +36,7 @@ export default function Header() {
                 Administrar funciones
               </Link>
             )}
-            <button className={estilos.boton} onClick={cerrarSesion}>
+            <button className={estilos.boton} onClick={salir}>
               Cerrar sesión
             </button>
           </>
