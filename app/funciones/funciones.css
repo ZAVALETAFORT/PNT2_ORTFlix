@@ -1,0 +1,83 @@
+.funciones-admin {
+  margin-bottom: 16px;
+}
+
+.funciones-admin .boton,
+.funcion-acciones .boton {
+  display: inline-block;
+  text-decoration: none;
+}
+
+.funciones-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.funciones-filtros label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 14px;
+  color: var(--color-texto-suave);
+}
+
+.funciones-filtros select {
+  min-width: 220px;
+  padding: 8px 10px;
+  border: 1px solid var(--color-borde-fuerte);
+  border-radius: var(--radio);
+  background: var(--color-superficie);
+  font-size: 14px;
+}
+
+.funciones-dia {
+  margin-bottom: 24px;
+}
+
+.funciones-dia h2 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.funciones-dia ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.funcion-fila {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 12px 16px;
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+}
+
+.funcion-fila p {
+  font-size: 14px;
+  color: var(--color-texto-suave);
+  margin-top: 4px;
+}
+
+.funcion-titulo {
+  font-weight: 600;
+  color: var(--color-texto);
+  text-decoration: none;
+}
+
+.funcion-titulo:hover {
+  color: var(--color-primario);
+}
+
+.funcion-acciones {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}

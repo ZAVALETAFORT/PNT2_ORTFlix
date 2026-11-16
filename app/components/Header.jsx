@@ -22,6 +22,9 @@ export default function Header() {
       </Link>
 
       <nav className={estilos.nav}>
+        <Link href="/funciones" className={estilos.link}>
+          Funciones
+        </Link>
         {user ? (
           <>
             <span>Hola, {user.username}</span>
