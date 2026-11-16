@@ -1,5 +1,6 @@
 import db from "@/lib/db";
 import { error, leerBody, favoritoAJson } from "@/lib/api";
+import { validarDuenio } from "@/lib/auth";
 
 function usuarioExiste(id) {
   return db.prepare("SELECT id FROM usuarios WHERE id = ?").get(Number(id));
@@ -7,6 +8,9 @@ function usuarioExiste(id) {
 
 export async function GET(request, { params }) {
   const { usuarioId } = await params;
+  // Sin token 401; con el token de otro usuario 403
+  const rechazo = await validarDuenio(request, usuarioId);
+  if (rechazo) return rechazo;
   if (!usuarioExiste(usuarioId)) return error(404, "El usuario no existe.");
 
   const favoritos = db
@@ -17,6 +21,8 @@ export async function GET(request, { params }) {
 
 export async function POST(request, { params }) {
   const { usuarioId } = await params;
+  const rechazo = await validarDuenio(request, usuarioId);
+  if (rechazo) return rechazo;
   if (!usuarioExiste(usuarioId)) return error(404, "El usuario no existe.");
 
   const body = await leerBody(request);

@@ -1,5 +1,6 @@
 import db from "@/lib/db";
 import { error, leerBody, favoritoAJson } from "@/lib/api";
+import { validarDuenio } from "@/lib/auth";
 
 function buscarFavorito(usuarioId, movieId) {
   return db
@@ -9,6 +10,9 @@ function buscarFavorito(usuarioId, movieId) {
 
 export async function GET(request, { params }) {
   const { usuarioId, movieId } = await params;
+  // Sin token 401; con el token de otro usuario 403
+  const rechazo = await validarDuenio(request, usuarioId);
+  if (rechazo) return rechazo;
   const favorito = buscarFavorito(usuarioId, movieId);
   if (!favorito) return error(404, "El favorito no existe.");
   return Response.json(favoritoAJson(favorito));
@@ -16,6 +20,9 @@ export async function GET(request, { params }) {
 
 export async function PUT(request, { params }) {
   const { usuarioId, movieId } = await params;
+  // Sin token 401; con el token de otro usuario 403
+  const rechazo = await validarDuenio(request, usuarioId);
+  if (rechazo) return rechazo;
   const favorito = buscarFavorito(usuarioId, movieId);
   if (!favorito) return error(404, "El favorito no existe.");
 
@@ -37,6 +44,9 @@ export async function PUT(request, { params }) {
 
 export async function DELETE(request, { params }) {
   const { usuarioId, movieId } = await params;
+  // Sin token 401; con el token de otro usuario 403
+  const rechazo = await validarDuenio(request, usuarioId);
+  if (rechazo) return rechazo;
   const favorito = buscarFavorito(usuarioId, movieId);
   if (!favorito) return error(404, "El favorito no existe.");
 

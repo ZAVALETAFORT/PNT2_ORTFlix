@@ -43,7 +43,9 @@ export default function PeliculaList() {
         const me = await meRes.json();
         setUsuarioId(me.id);
 
-        const res = await fetch(`/api/favoritos/${me.id}`);
+        const res = await fetch(`/api/favoritos/${me.id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         if (res.ok) {
           const lista = await res.json();
           setFavoritos(lista.map((f) => f.movieId));
@@ -63,14 +65,19 @@ export default function PeliculaList() {
     }
 
     const esFavorita = favoritos.includes(movie.id);
+    // La API de favoritos pide el token del usuario
+    const autorizacion = { Authorization: `Bearer ${localStorage.getItem('token')}` };
     try {
       let res;
       if (esFavorita) {
-        res = await fetch(`/api/favoritos/${usuarioId}/${movie.id}`, { method: 'DELETE' });
+        res = await fetch(`/api/favoritos/${usuarioId}/${movie.id}`, {
+          method: 'DELETE',
+          headers: autorizacion,
+        });
       } else {
         res = await fetch(`/api/favoritos/${usuarioId}`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json', ...autorizacion },
           body: JSON.stringify({
             movieId: movie.id,
             titulo: movie.title,
