@@ -88,3 +88,12 @@
   background: var(--color-primario);
   color: #ffffff;
 }
+
+.movie-card-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.movie-card-link:hover {
+  color: var(--color-primario);
+}

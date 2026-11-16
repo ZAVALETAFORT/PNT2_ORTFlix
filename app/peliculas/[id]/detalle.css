@@ -1,0 +1,132 @@
+/* Cabecera con la imagen de fondo de la película, oscurecida para que se lea el texto */
+.detalle-cabecera {
+  background-color: #111827;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  color: #ffffff;
+}
+
+.detalle-cabecera::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(17, 24, 39, 0.78);
+}
+
+.detalle-cabecera-contenido {
+  position: relative;
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+}
+
+.detalle-poster {
+  width: 240px;
+  flex-shrink: 0;
+  border-radius: var(--radio-grande);
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+}
+
+.detalle-sin-poster {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-borde);
+  color: var(--color-texto-suave);
+}
+
+.detalle-info h1 {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.detalle-datos {
+  color: #e5e7eb;
+  margin-bottom: 12px;
+}
+
+.detalle-generos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.detalle-genero {
+  padding: 2px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 999px;
+  font-size: 13px;
+}
+
+.detalle-sinopsis {
+  line-height: 1.5;
+  max-width: 720px;
+  margin-bottom: 20px;
+}
+
+.detalle-info .boton {
+  display: inline-block;
+  text-decoration: none;
+}
+
+.detalle-subtitulo {
+  font-size: 22px;
+  margin-bottom: 16px;
+}
+
+.detalle-dia {
+  margin-bottom: 20px;
+}
+
+.detalle-dia h3 {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.detalle-horarios {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* Cada horario es un link a la reserva de esa función */
+.detalle-horario {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 14px;
+  border: 1px solid var(--color-borde-fuerte);
+  border-radius: var(--radio);
+  background: var(--color-superficie);
+  color: var(--color-texto);
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.detalle-horario span {
+  font-size: 12px;
+  color: var(--color-texto-suave);
+}
+
+.detalle-horario:hover {
+  border-color: var(--color-primario);
+  background: var(--color-primario-suave);
+}
+
+.detalle-volver {
+  margin-top: 24px;
+}
+
+@media (max-width: 640px) {
+  .detalle-cabecera-contenido {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .detalle-poster {
+    width: 180px;
+  }
+}
