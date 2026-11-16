@@ -152,11 +152,13 @@ La aplicación utiliza **Next.js App Router** para administrar la navegación en
 | **Login**                | `/login`          | Inicio de sesión                         |
 | **Register**             | `/register`       | Registro de usuarios                      |
 | **Favoritos**            | `/favoritos`      | Gestión de películas favoritas          |
-| **Funciones**            | `/funciones`      | Consulta y administración de funciones   |
-| **Reservas**             | `/reservas`       | Gestión de reservas                      |
-| **Detalle de película** | `/peliculas/[id]` | Información individual de cada película |
+| **Funciones**            | `/funciones`      | Listado con filtros; el cliente reserva y el admin edita o elimina |
+| **Reservas**             | `/reservas`       | Gestión de reservas (requiere sesión)    |
+| **Nueva reserva**        | `/reservas/nueva?funcionId=X` | Mapa de asientos (requiere sesión) |
+| **Detalle de película** | `/peliculas/[id]` | Ficha de TMDB y funciones agrupadas por día |
+| **Administrar funciones** | `/admin/funciones` | Alta, edición y baja de funciones (solo admin) |
 
-**Nota:** las rutas de Favoritos, Funciones, Reservas y Detalle forman parte del alcance previsto y pueden ajustarse durante el desarrollo.
+Las rutas privadas se protegen con `RutaProtegida` (usa `useProtegerRuta`) en el layout de cada sección: sin sesión redirigen a `/login` y `/admin/funciones` sin rol admin redirige al home.
 
 ---
 
@@ -193,6 +195,10 @@ reserva = { id, usuarioId, funcionId, asientos, estado, fechaCreacion }
 | GET | `/api/reservas` | token | Reservas del usuario logueado |
 | POST | `/api/reservas` | token | Body `{ funcionId, asientos }` |
 | PUT | `/api/reservas/[id]` | token | `{ estado: "cancelada" }` o `{ funcionId, asientos }` |
+| GET | `/api/favoritos/[usuarioId]` | token (del mismo usuario) | Favoritos del usuario |
+| POST | `/api/favoritos/[usuarioId]` | token (del mismo usuario) | Body `{ movieId, titulo, poster?, puntaje?, nota? }` |
+| PUT | `/api/favoritos/[usuarioId]/[movieId]` | token (del mismo usuario) | Modifica la nota u otros campos |
+| DELETE | `/api/favoritos/[usuarioId]/[movieId]` | token (del mismo usuario) | Borra el favorito |
 
 Los endpoints con token requieren el header `Authorization: Bearer <token>`. El registro y el login **no** son parte de esta API: se hacen contra el backend del profesor (`NEXT_PUBLIC_API_URL`), y el token que devuelve es el que se usa acá.
 
@@ -309,6 +315,8 @@ Conviene correrlo cada tanto para que las fechas de las funciones no queden en e
 **DELETE `/api/usuarios/[id]`** → `200`. `404` si no existe.
 
 ### Favoritos
+
+Todos piden `Authorization: Bearer <token>` y que el token sea del mismo `usuarioId` de la URL: sin token `401`, con el token de otro usuario `403`.
 
 **GET `/api/favoritos/[usuarioId]`** → favoritos de un usuario.
 **POST `/api/favoritos/[usuarioId]`** — body `{ "movieId", "titulo", "poster?", "puntaje?", "nota?" }` → `201`. `400` si faltan datos, `404` si el usuario no existe, `409` si ya está en favoritos.
@@ -466,7 +474,7 @@ El proyecto se desarrolla de forma incremental mediante GitHub Issues, ramas ind
 - [X]  Integración inicial con backend externo.
 - [X]  Estado global de sesión (`AuthProvider`).
 - [X]  Sistema de roles (Administrador y Cliente).
-- [ ]  Protección de rutas según permisos.
+- [X]  Protección de rutas según permisos.
 - [X]  Integración de autenticación con SQLite.
 
 **Cartelera y películas**
@@ -474,16 +482,16 @@ El proyecto se desarrolla de forma incremental mediante GitHub Issues, ramas ind
 - [X]  Consulta de películas mediante TMDB.
 - [X]  Visualización de tarjetas.
 - [X]  Buscador de películas.
-- [ ]  Detalle de película.
-- [ ]  Visualización de funciones disponibles.
+- [X]  Detalle de película.
+- [X]  Visualización de funciones disponibles.
 
 **Gestión del cine**
 
-- [ ]  ABM de funciones.
+- [X]  ABM de funciones.
 - [X]  ABM de reservas.
 - [X]  Selección de asientos.
 - [X]  Prevención de reservas duplicadas.
-- [ ]  ABM de favoritos.
+- [X]  ABM de favoritos.
 - [ ]  ABM de empleados.
 - [ ]  Incorporación del rol Empleado.
 
@@ -494,9 +502,9 @@ El proyecto se desarrolla de forma incremental mediante GitHub Issues, ramas ind
 
 **Objetivo:** implementar el flujo de selección de películas y reserva de asientos, tomando como referencia Cinemark.
 
-- [ ]  Acceder al detalle de una película.
-- [ ]  Seleccionar función, día y horario.
-- [ ]  Seleccionar formato (2D, 3D o 4D).
+- [X]  Acceder al detalle de una película.
+- [X]  Seleccionar función, día y horario.
+- [X]  Seleccionar formato (2D, 3D o 4D).
 - [X]  Visualizar asientos disponibles y ocupados.
 - [X]  Seleccionar y confirmar una reserva.
 - [X]  Impedir reservar dos veces el mismo asiento para una función.
