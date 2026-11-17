@@ -1,22 +1,23 @@
 "use client";
 
-import { useState, useSyncExternalStore } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useFunciones } from "./FuncionesContext";
 import { useAuth } from "@/app/components/AuthProvider";
 import { hoyISO, proximosDias } from "@/app/components/funcion/fechas";
 
-function suscribirseSinCambios() {
-  return () => {};
-}
-
 export default function FuncionesAdminPage() {
   const { funciones, setFunciones, salas, cargando, error } = useFunciones();
   const { token } = useAuth();
-  const hoy = useSyncExternalStore(suscribirseSinCambios, hoyISO, () => "");
+  const [hoy, setHoy] = useState(""); // la fecha de hoy se lee en el navegador, para evitar errores de hydration
   const [elegido, setElegido] = useState("");
   const [confirmandoId, setConfirmandoId] = useState(null); // función que espera el "¿Seguro?"
   const [aviso, setAviso] = useState("");
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setHoy(hoyISO());
+  }, []);
 
   const dias = hoy ? proximosDias(7) : [];
   const diaSeleccionado = elegido || hoy; // hasta que se toque un botón, se muestra hoy

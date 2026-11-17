@@ -3,7 +3,6 @@ import PeliculaList from '@/app/components/pelicula/PeliculaList';
 const BASE_URL = process.env.TMDB_BASE_URL;
 
 async function getPeliculas(path) {
-  'use cache';
   const res = await fetch(`${BASE_URL}${path}`, {
     headers: {
       accept: 'application/json',

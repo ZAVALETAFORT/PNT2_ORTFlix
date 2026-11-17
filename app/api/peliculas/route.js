@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 
 async function getEnCartelera() {
-  'use cache';
   const res = await fetch(`${process.env.TMDB_BASE_URL}/movie/now_playing?language=es-AR&region=AR`, {
     headers: {
       accept: 'application/json',
