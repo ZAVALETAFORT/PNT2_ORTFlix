@@ -9,10 +9,17 @@ function formatearFecha(fecha) {
   return new Date(`${fecha}T00:00:00`).toLocaleDateString('es-AR');
 }
 
-// El botón de favorito aparece solo si la lista le pasa onFavorito
+// Toda la tarjeta es un link al detalle de la película.
+// El botón de favorito aparece solo si la lista le pasa onFavorito.
 export default function PeliculaCard({ movie, esFavorita = false, onFavorito }) {
+  // El botón está dentro del link: se frena el click para que no abra el detalle
+  function alternarFavorito(e) {
+    e.preventDefault();
+    onFavorito(movie);
+  }
+
   return (
-    <div className="movie-card">
+    <Link href={`/peliculas/${movie.id}`} className="movie-card">
       {movie.poster_path ? (
         <img src={`${IMG_URL}${movie.poster_path}`} alt={movie.title} className="movie-card-poster" />
       ) : (
@@ -23,20 +30,17 @@ export default function PeliculaCard({ movie, esFavorita = false, onFavorito }) 
         <p className="movie-card-fecha">Estreno: {formatearFecha(movie.release_date)}</p>
         <p className="movie-card-rating">Puntaje: {movie.vote_average?.toFixed(1) ?? '-'}</p>
         {/* <p className="movie-card-descripcion">{movie.overview || 'Sin descripción disponible.'}</p> */}
-        <Link href={`/peliculas/${movie.id}`} className="movie-card-detalle">
-          Ver ficha
-        </Link>
         {onFavorito && (
           <button
             type="button"
             className={`movie-card-favorito${esFavorita ? ' activo' : ''}`}
             aria-pressed={esFavorita}
-            onClick={() => onFavorito(movie)}
+            onClick={alternarFavorito}
           >
             {esFavorita ? 'Quitar de favoritos' : 'Agregar a favoritos'}
           </button>
         )}
       </div>
-    </div>
+    </Link>
   );
 }
