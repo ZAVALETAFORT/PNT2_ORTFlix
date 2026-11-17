@@ -3,12 +3,14 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useFunciones } from "../FuncionesContext";
+import { useAuth } from "@/app/components/AuthProvider";
 import FuncionForm from "../FuncionForm";
 import { enviarFuncion } from "../enviarFuncion";
 
 export default function NuevaFuncionPage() {
   const router = useRouter();
   const { setFunciones } = useFunciones();
+  const { token } = useAuth();
   const [formKey, setFormKey] = useState(0);
 
   function volverAlListado() {
@@ -17,7 +19,7 @@ export default function NuevaFuncionPage() {
   }
 
   async function guardar(datos) {
-    const { funcion, error } = await enviarFuncion(datos);
+    const { funcion, error } = await enviarFuncion(datos, token);
     if (error) return error;
 
     setFunciones((prev) => [...prev, funcion]);

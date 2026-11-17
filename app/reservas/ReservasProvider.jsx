@@ -2,11 +2,13 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
+import { useAuth } from "../components/AuthProvider";
 
 const ReservasContext = createContext(null);
 
 export function ReservasProvider({ children }) {
   const pathname = usePathname();
+  const { token, cargando: cargandoSesion } = useAuth();
 
   const [reservas, setReservas] = useState([]);
 
@@ -25,12 +27,13 @@ export function ReservasProvider({ children }) {
   useEffect(() => {
     if (!pathname.startsWith("/reservas")) return;
 
+    // Hasta que el contexto lea la sesión guardada no se sabe si hay token
+    if (cargandoSesion) return;
+
     let activo = true;
 
     async function cargarDatos() {
       try {
-        const token = localStorage.getItem("token");
-
         const resReservas = await fetch("/api/reservas", {
           headers: { Authorization: `Bearer ${token || ""}` },
           cache: "no-store",
@@ -62,7 +65,7 @@ export function ReservasProvider({ children }) {
     return () => {
       activo = false;
     };
-  }, [pathname]);
+  }, [pathname, cargandoSesion, token]);
 
   // Guarda una reserva del usuario autenticado.
   async function crearReserva(funcionId, asientos) {
@@ -79,8 +82,6 @@ export function ReservasProvider({ children }) {
     }
 
     try {
-      const token = localStorage.getItem("token");
-
       if (!token) {
         return { ok: false, message: "Necesitás iniciar sesión." };
       }
@@ -114,7 +115,6 @@ export function ReservasProvider({ children }) {
 
   // Envía las cancelaciones y cambios a la API.
   async function actualizarReserva(id, body) {
-    const token = localStorage.getItem("token");
     if (!token) return { ok: false, message: "Necesitás iniciar sesión." };
 
     try {

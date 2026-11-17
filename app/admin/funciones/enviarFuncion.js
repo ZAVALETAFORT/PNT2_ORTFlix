@@ -1,7 +1,7 @@
 // Crea (POST) o modifica (PUT, si viene id) una función en la API.
+// El token de la sesión lo pasa quien la llama (sale de useAuth).
 // Devuelve { funcion } si salió bien o { error } con el mensaje para mostrar.
-export async function enviarFuncion(datos, id = null) {
-  const token = localStorage.getItem("token");
+export async function enviarFuncion(datos, token, id = null) {
   if (!token) return { error: "Iniciá sesión como administrador para guardar funciones." };
 
   try {

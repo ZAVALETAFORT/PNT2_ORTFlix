@@ -4,13 +4,14 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useProtegerRuta } from "@/app/hooks/useProtegerRuta";
+import { useAuth } from "@/app/components/AuthProvider";
 import "./favoritos.css";
 
 export default function MisFavoritos() {
   const router = useRouter();
   const autorizado = useProtegerRuta();
+  const { token } = useAuth();
   const [usuarioId, setUsuarioId] = useState(null);
-  const [token, setToken] = useState(null);
   const [favoritos, setFavoritos] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
@@ -23,10 +24,8 @@ export default function MisFavoritos() {
 
     async function cargar() {
       try {
-        const tokenGuardado = localStorage.getItem("token");
-
         const meRes = await fetch("/api/users/me", {
-          headers: { Authorization: `Bearer ${tokenGuardado}` },
+          headers: { Authorization: `Bearer ${token}` },
         });
         // Token vencido o inválido: se vuelve a iniciar sesión
         if (meRes.status === 401) {
@@ -36,10 +35,9 @@ export default function MisFavoritos() {
         if (!meRes.ok) throw new Error("No se pudo obtener el usuario.");
         const me = await meRes.json();
         setUsuarioId(me.id);
-        setToken(tokenGuardado);
 
         const res = await fetch(`/api/favoritos/${me.id}`, {
-          headers: { Authorization: `Bearer ${tokenGuardado}` },
+          headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) throw new Error("No se pudieron cargar los favoritos.");
         setFavoritos(await res.json());
@@ -50,7 +48,7 @@ export default function MisFavoritos() {
       }
     }
     cargar();
-  }, [autorizado, router]);
+  }, [autorizado, token, router]);
 
   async function eliminar(favorito) {
     if (!usuarioId) return;
