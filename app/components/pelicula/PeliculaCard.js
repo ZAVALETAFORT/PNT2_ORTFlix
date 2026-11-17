@@ -1,4 +1,5 @@
 import './PeliculaCard.css';
+import Link from 'next/link';
 
 
 export const IMG_URL = 'https://image.tmdb.org/t/p/w500';
@@ -22,6 +23,9 @@ export default function PeliculaCard({ movie, esFavorita = false, onFavorito }) 
         <p className="movie-card-fecha">Estreno: {formatearFecha(movie.release_date)}</p>
         <p className="movie-card-rating">Puntaje: {movie.vote_average?.toFixed(1) ?? '-'}</p>
         {/* <p className="movie-card-descripcion">{movie.overview || 'Sin descripción disponible.'}</p> */}
+        <Link href={`/peliculas/${movie.id}`} className="movie-card-detalle">
+          Ver ficha
+        </Link>
         {onFavorito && (
           <button
             type="button"

@@ -1,4 +1,5 @@
 import db from "@/lib/db";
+import { obtenerUsuario } from "@/lib/auth";
 import { error, leerBody, favoritoAJson } from "@/lib/api";
 
 function buscarFavorito(usuarioId, movieId) {
@@ -8,14 +9,24 @@ function buscarFavorito(usuarioId, movieId) {
 }
 
 export async function GET(request, { params }) {
+  const usuario = await obtenerUsuario(request);
+  if (!usuario) return error(401, "Necesitás iniciar sesión.");
+
   const { usuarioId, movieId } = await params;
+  if (usuario.id !== Number(usuarioId)) return error(403, "No tenés permiso para ver estos favoritos.");
+
   const favorito = buscarFavorito(usuarioId, movieId);
   if (!favorito) return error(404, "El favorito no existe.");
   return Response.json(favoritoAJson(favorito));
 }
 
 export async function PUT(request, { params }) {
+  const usuario = await obtenerUsuario(request);
+  if (!usuario) return error(401, "Necesitás iniciar sesión.");
+
   const { usuarioId, movieId } = await params;
+  if (usuario.id !== Number(usuarioId)) return error(403, "No tenés permiso para modificar estos favoritos.");
+
   const favorito = buscarFavorito(usuarioId, movieId);
   if (!favorito) return error(404, "El favorito no existe.");
 
@@ -36,7 +47,12 @@ export async function PUT(request, { params }) {
 }
 
 export async function DELETE(request, { params }) {
+  const usuario = await obtenerUsuario(request);
+  if (!usuario) return error(401, "Necesitás iniciar sesión.");
+
   const { usuarioId, movieId } = await params;
+  if (usuario.id !== Number(usuarioId)) return error(403, "No tenés permiso para modificar estos favoritos.");
+
   const favorito = buscarFavorito(usuarioId, movieId);
   if (!favorito) return error(404, "El favorito no existe.");
 

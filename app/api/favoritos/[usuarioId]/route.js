@@ -1,4 +1,5 @@
 import db from "@/lib/db";
+import { obtenerUsuario } from "@/lib/auth";
 import { error, leerBody, favoritoAJson } from "@/lib/api";
 
 function usuarioExiste(id) {
@@ -6,7 +7,11 @@ function usuarioExiste(id) {
 }
 
 export async function GET(request, { params }) {
+  const usuario = await obtenerUsuario(request);
+  if (!usuario) return error(401, "Necesitás iniciar sesión.");
+
   const { usuarioId } = await params;
+  if (usuario.id !== Number(usuarioId)) return error(403, "No tenés permiso para ver estos favoritos.");
   if (!usuarioExiste(usuarioId)) return error(404, "El usuario no existe.");
 
   const favoritos = db
@@ -16,7 +21,11 @@ export async function GET(request, { params }) {
 }
 
 export async function POST(request, { params }) {
+  const usuario = await obtenerUsuario(request);
+  if (!usuario) return error(401, "Necesitás iniciar sesión.");
+
   const { usuarioId } = await params;
+  if (usuario.id !== Number(usuarioId)) return error(403, "No tenés permiso para modificar estos favoritos.");
   if (!usuarioExiste(usuarioId)) return error(404, "El usuario no existe.");
 
   const body = await leerBody(request);
