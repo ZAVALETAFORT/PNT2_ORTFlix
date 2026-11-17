@@ -1,0 +1,90 @@
+.movie-card {
+  display: block;
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-grande);
+  overflow: hidden;
+  color: var(--color-texto);
+  text-decoration: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.movie-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+}
+
+.movie-card-poster {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  display: block;
+}
+
+.movie-card-sin-poster {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  background: var(--color-borde);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-texto-suave);
+  font-size: 14px;
+}
+
+.movie-card-info {
+  padding: 12px 14px 16px;
+}
+
+.movie-card-titulo {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.movie-card-fecha {
+  font-size: 13px;
+  color: var(--color-texto-suave);
+  margin-bottom: 4px;
+}
+
+.movie-card-rating {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-acento);
+  margin-bottom: 8px;
+}
+
+.movie-card-descripcion {
+  font-size: 13px;
+  color: var(--color-texto-suave);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.movie-card-favorito {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--color-primario);
+  border-radius: var(--radio);
+  background: var(--color-superficie);
+  color: var(--color-primario);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.movie-card-favorito:hover {
+  background: var(--color-primario-suave);
+}
+
+.movie-card-favorito.activo {
+  background: var(--color-primario);
+  color: #ffffff;
+}
