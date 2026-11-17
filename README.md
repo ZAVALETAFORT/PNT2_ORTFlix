@@ -466,7 +466,7 @@ El proyecto se desarrolla de forma incremental mediante GitHub Issues, ramas ind
 - [X]  Integración inicial con backend externo.
 - [X]  Estado global de sesión (`AuthProvider`).
 - [X]  Sistema de roles (Administrador y Cliente).
-- [ ]  Protección de rutas según permisos.
+- [ ]  Protección de rutas según permisos (aplicada en favoritos; falta en reservas y administrar funciones).
 - [X]  Integración de autenticación con SQLite.
 
 **Cartelera y películas**
@@ -474,16 +474,16 @@ El proyecto se desarrolla de forma incremental mediante GitHub Issues, ramas ind
 - [X]  Consulta de películas mediante TMDB.
 - [X]  Visualización de tarjetas.
 - [X]  Buscador de películas.
-- [ ]  Detalle de película.
-- [ ]  Visualización de funciones disponibles.
+- [X]  Detalle de película.
+- [X]  Visualización de funciones disponibles.
 
 **Gestión del cine**
 
-- [ ]  ABM de funciones.
+- [X]  ABM de funciones (listado, alta, edición y cancelación).
 - [X]  ABM de reservas.
 - [X]  Selección de asientos.
 - [X]  Prevención de reservas duplicadas.
-- [ ]  ABM de favoritos.
+- [X]  ABM de favoritos (agregar, listar, editar la nota y eliminar).
 - [ ]  ABM de empleados.
 - [ ]  Incorporación del rol Empleado.
 
@@ -494,9 +494,9 @@ El proyecto se desarrolla de forma incremental mediante GitHub Issues, ramas ind
 
 **Objetivo:** implementar el flujo de selección de películas y reserva de asientos, tomando como referencia Cinemark.
 
-- [ ]  Acceder al detalle de una película.
-- [ ]  Seleccionar función, día y horario.
-- [ ]  Seleccionar formato (2D, 3D o 4D).
+- [X]  Acceder al detalle de una película.
+- [X]  Seleccionar función, día y horario.
+- [X]  Seleccionar formato (2D, 3D o 4D).
 - [X]  Visualizar asientos disponibles y ocupados.
 - [X]  Seleccionar y confirmar una reserva.
 - [X]  Impedir reservar dos veces el mismo asiento para una función.
@@ -513,12 +513,14 @@ El proyecto se desarrolla de forma incremental mediante GitHub Issues, ramas ind
 | Estado global de sesión   | ✅ Integrado                         |
 | Cartelera TMDB y buscador | ✅ Integrado, con ajustes pendientes |
 | Estructura inicial SQLite | ✅ Integrado                         |
-| Detalle de película      | ⏳ Pendiente                         |
+| Detalle de película      | ✅ Integrado                         |
 | Sistema de roles          | ✅ Integrado                         |
-| ABM de funciones          | 🔄 En curso (listado y cancelar)     |
+| ABM de funciones          | ✅ Integrado                         |
 | Reservas y asientos       | ✅ Integrado                         |
 | API REST propia           | ✅ Integrado                         |
-| ABM Favoritos y Empleados | 🔄 Favoritos en curso, Empleados pendiente |
+| ABM Favoritos             | ✅ Integrado                         |
+| Protección de rutas       | 🔄 En curso (aplicada en favoritos)  |
+| ABM Empleados y rol Empleado | ⏳ Pendiente                      |
 
 
 **Criterio de finalización:** cada funcionalidad debe estar implementada, probada y fusionada en `develop`
