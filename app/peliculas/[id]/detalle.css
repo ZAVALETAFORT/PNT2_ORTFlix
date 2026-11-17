@@ -51,16 +51,41 @@
   font-size: 13px;
 }
 
+/* Estreno, duración y puntaje como tarjetitas con su etiqueta */
 .detalle-datos {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px 20px;
+  gap: 10px;
+}
+
+.detalle-dato {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 110px;
+  padding: 8px 14px;
+  background: var(--color-fondo);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+}
+
+.detalle-dato-titulo {
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
   color: var(--color-texto-suave);
 }
 
-.detalle-puntaje {
-  color: var(--color-acento);
+.detalle-dato-valor {
+  font-size: 16px;
   font-weight: 600;
+}
+
+.detalle-puntaje {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--color-acento);
 }
 
 .detalle-sinopsis {
@@ -69,7 +94,11 @@
 
 .detalle-trailer {
   align-self: flex-start;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  font-weight: 600;
   text-decoration: none;
 }
 
@@ -127,8 +156,20 @@
 }
 
 .detalle-formato {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   font-size: 13px;
   color: var(--color-texto-suave);
+}
+
+/* 2D, 3D o 4D como etiqueta */
+.detalle-badge {
+  padding: 1px 8px;
+  border-radius: 4px;
+  background: var(--color-primario-suave);
+  color: var(--color-primario-oscuro);
+  font-weight: 600;
 }
 
 .detalle-precio {

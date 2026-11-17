@@ -12,6 +12,23 @@ function formatearFecha(fecha) {
   return new Date(`${fecha}T00:00:00`).toLocaleDateString("es-AR");
 }
 
+// Íconos chicos dibujados con SVG (toman el color del texto con currentColor)
+function IconoPlay() {
+  return (
+    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+      <path d="M8 5v14l11-7z" fill="currentColor" />
+    </svg>
+  );
+}
+
+function IconoEstrella() {
+  return (
+    <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+      <path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.9L12 17.8 5.8 21l1.2-6.9-5-4.9 6.9-1z" fill="currentColor" />
+    </svg>
+  );
+}
+
 export default async function PeliculaPage({ params }) {
   const { id } = await params;
 
@@ -103,11 +120,22 @@ export default async function PeliculaPage({ params }) {
           )}
 
           <div className="detalle-datos">
-            <span>Estreno: {formatearFecha(pelicula.fechaEstreno)}</span>
-            {pelicula.duracion && <span>Duración: {pelicula.duracion} min</span>}
-            <span className="detalle-puntaje">
-              Puntaje: {pelicula.puntaje ? pelicula.puntaje.toFixed(1) : "-"}
-            </span>
+            <div className="detalle-dato">
+              <span className="detalle-dato-titulo">Estreno</span>
+              <span className="detalle-dato-valor">{formatearFecha(pelicula.fechaEstreno)}</span>
+            </div>
+            {pelicula.duracion && (
+              <div className="detalle-dato">
+                <span className="detalle-dato-titulo">Duración</span>
+                <span className="detalle-dato-valor">{pelicula.duracion} min</span>
+              </div>
+            )}
+            <div className="detalle-dato">
+              <span className="detalle-dato-titulo">Puntaje</span>
+              <span className="detalle-dato-valor detalle-puntaje">
+                <IconoEstrella /> {pelicula.puntaje ? pelicula.puntaje.toFixed(1) : "-"}
+              </span>
+            </div>
           </div>
 
           <p className="detalle-sinopsis">{pelicula.sinopsis}</p>
@@ -117,20 +145,18 @@ export default async function PeliculaPage({ params }) {
               href={pelicula.trailer}
               target="_blank"
               rel="noopener noreferrer"
-              className="boton boton-secundario detalle-trailer"
+              className="boton detalle-trailer"
             >
-              Ver tráiler en YouTube
+              <IconoPlay /> Ver tráiler
             </a>
           )}
         </div>
       </div>
 
       <section className="detalle-funciones">
-        <h2>Funciones disponibles</h2>
-        {funciones.length === 0 ? (
+        <h2>Funciones</h2>
+        {funciones.length === 0 && (
           <p className="detalle-ayuda">No hay funciones disponibles para esta película.</p>
-        ) : (
-          <p className="detalle-ayuda">Elegí un horario para reservar tus asientos.</p>
         )}
 
         {dias.map((dia) => (
@@ -140,7 +166,9 @@ export default async function PeliculaPage({ params }) {
               {grupos[dia].map((f) => (
                 <Link key={f.id} href={`/reservas/nueva?funcionId=${f.id}`} className="detalle-horario">
                   <span className="detalle-hora">{f.hora}</span>
-                  <span className="detalle-formato">{f.formato} · {f.idioma}</span>
+                  <span className="detalle-formato">
+                    <span className="detalle-badge">{f.formato}</span> {f.idioma}
+                  </span>
                   <span className="detalle-precio">${f.precio.toLocaleString("es-AR")}</span>
                 </Link>
               ))}
