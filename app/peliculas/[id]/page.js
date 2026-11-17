@@ -1,6 +1,7 @@
 import Link from "next/link";
 import db from "@/lib/db";
 import { funcionAJson } from "@/lib/api";
+import "./detalle.css";
 
 const POSTER_URL = "https://image.tmdb.org/t/p/w500";
 const BACKDROP_URL = "https://image.tmdb.org/t/p/w1280";
@@ -84,69 +85,63 @@ export default async function PeliculaPage({ params }) {
   return (
     <main className="contenedor">
       {pelicula.backdrop && (
-        <div style={{ marginBottom: 16 }}>
-          <img
-            src={pelicula.backdrop}
-            alt={pelicula.titulo}
-            style={{ width: "100%", maxHeight: 360, objectFit: "cover", borderRadius: 8 }}
-          />
-        </div>
+        <img src={pelicula.backdrop} alt={pelicula.titulo} className="detalle-banner" />
       )}
 
-      <div style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>
-        <img
-          src={pelicula.poster}
-          alt={pelicula.titulo}
-          style={{ width: 220, borderRadius: 8 }}
-        />
-        <div style={{ flex: 1, minWidth: 260 }}>
-          <h1>{pelicula.titulo}</h1>
-          <p>
-            <strong>Estreno:</strong> {formatearFecha(pelicula.fechaEstreno)}
-          </p>
-          <p>
-            <strong>Puntaje:</strong> {pelicula.puntaje ? pelicula.puntaje.toFixed(1) : "-"}
-          </p>
-          {pelicula.duracion && (
-            <p>
-              <strong>Duración:</strong> {pelicula.duracion} min
-            </p>
-          )}
+      <div className="detalle-ficha">
+        <img src={pelicula.poster} alt={pelicula.titulo} className="detalle-poster" />
+
+        <div className="detalle-info">
+          <h1 className="titulo-pagina">{pelicula.titulo}</h1>
+
           {pelicula.generos.length > 0 && (
-            <p>
-              <strong>Géneros:</strong> {pelicula.generos.join(", ")}
-            </p>
+            <div className="detalle-generos">
+              {pelicula.generos.map((genero) => (
+                <span key={genero} className="detalle-genero">{genero}</span>
+              ))}
+            </div>
           )}
-          <p>{pelicula.sinopsis}</p>
+
+          <div className="detalle-datos">
+            <span>Estreno: {formatearFecha(pelicula.fechaEstreno)}</span>
+            {pelicula.duracion && <span>Duración: {pelicula.duracion} min</span>}
+            <span className="detalle-puntaje">
+              Puntaje: {pelicula.puntaje ? pelicula.puntaje.toFixed(1) : "-"}
+            </span>
+          </div>
+
+          <p className="detalle-sinopsis">{pelicula.sinopsis}</p>
+
           {pelicula.trailer && (
-            <p>
-              <a href={pelicula.trailer} target="_blank" rel="noopener noreferrer">
-                Ver tráiler en YouTube
-              </a>
-            </p>
+            <a
+              href={pelicula.trailer}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="boton boton-secundario detalle-trailer"
+            >
+              Ver tráiler en YouTube
+            </a>
           )}
         </div>
       </div>
 
-      <section style={{ marginTop: 24 }}>
+      <section className="detalle-funciones">
         <h2>Funciones disponibles</h2>
-        {funciones.length === 0 && <p>No hay funciones disponibles para esta película.</p>}
+        {funciones.length === 0 ? (
+          <p className="detalle-ayuda">No hay funciones disponibles para esta película.</p>
+        ) : (
+          <p className="detalle-ayuda">Elegí un horario para reservar tus asientos.</p>
+        )}
+
         {dias.map((dia) => (
-          <div key={dia} style={{ marginBottom: 16 }}>
+          <div key={dia} className="detalle-dia">
             <h3>{etiquetaDia(dia)}</h3>
-            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            <div className="detalle-horarios">
               {grupos[dia].map((f) => (
-                <Link
-                  key={f.id}
-                  href={`/reservas/nueva?funcionId=${f.id}`}
-                  style={{
-                    border: "1px solid #ccc",
-                    padding: "8px 12px",
-                    borderRadius: 8,
-                    textDecoration: "none",
-                  }}
-                >
-                  {f.hora} · {f.formato} · {f.idioma}
+                <Link key={f.id} href={`/reservas/nueva?funcionId=${f.id}`} className="detalle-horario">
+                  <span className="detalle-hora">{f.hora}</span>
+                  <span className="detalle-formato">{f.formato} · {f.idioma}</span>
+                  <span className="detalle-precio">${f.precio.toLocaleString("es-AR")}</span>
                 </Link>
               ))}
             </div>
@@ -154,7 +149,7 @@ export default async function PeliculaPage({ params }) {
         ))}
       </section>
 
-      <p style={{ marginTop: 24 }}>
+      <p className="detalle-volver">
         <Link href="/">← Volver a la cartelera</Link>
       </p>
     </main>
