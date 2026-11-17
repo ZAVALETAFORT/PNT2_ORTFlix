@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Header from "./components/Header";
 import { AuthProvider } from "./components/AuthProvider";
 import "./global.css";
@@ -15,11 +16,15 @@ export default function RootLayout({ children }) {
       <body>
         <AuthProvider>
           <Header />
-          <ReservasProvider>
+          {/* ReservasProvider usa usePathname: en las rutas dinámicas la URL se conoce recién al abrir la página,
+              y Next exige envolver eso en Suspense para poder compilar */}
+          <Suspense fallback={null}>
+            <ReservasProvider>
 
-            {children}
+              {children}
 
-          </ReservasProvider>
+            </ReservasProvider>
+          </Suspense>
         </AuthProvider>
       </body>
     </html>
