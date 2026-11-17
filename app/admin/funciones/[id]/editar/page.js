@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useFunciones } from "../../FuncionesContext";
+import { useAuth } from "@/app/components/AuthProvider";
 import FuncionForm from "../../FuncionForm";
 import { enviarFuncion } from "../../enviarFuncion";
 
@@ -10,11 +11,12 @@ export default function EditarFuncionPage() {
   const router = useRouter();
   const { id } = useParams();
   const { funciones, setFunciones, cargando, error } = useFunciones();
+  const { token } = useAuth();
 
   const funcion = funciones.find((f) => f.id === Number(id));
 
   async function guardar(datos) {
-    const resultado = await enviarFuncion(datos, funcion.id);
+    const resultado = await enviarFuncion(datos, token, funcion.id);
     if (resultado.error) return resultado.error;
 
     setFunciones((prev) => prev.map((f) => (f.id === funcion.id ? resultado.funcion : f)));

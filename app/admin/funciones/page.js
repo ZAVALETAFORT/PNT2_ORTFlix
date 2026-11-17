@@ -3,6 +3,7 @@
 import { useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { useFunciones } from "./FuncionesContext";
+import { useAuth } from "@/app/components/AuthProvider";
 import { hoyISO, proximosDias } from "@/app/components/funcion/fechas";
 
 function suscribirseSinCambios() {
@@ -11,6 +12,7 @@ function suscribirseSinCambios() {
 
 export default function FuncionesAdminPage() {
   const { funciones, setFunciones, salas, cargando, error } = useFunciones();
+  const { token } = useAuth();
   const hoy = useSyncExternalStore(suscribirseSinCambios, hoyISO, () => "");
   const [elegido, setElegido] = useState("");
   const [confirmandoId, setConfirmandoId] = useState(null); // función que espera el "¿Seguro?"
@@ -32,7 +34,6 @@ export default function FuncionesAdminPage() {
     setAviso("");
     setConfirmandoId(null);
 
-    const token = localStorage.getItem("token");
     if (!token) {
       setAviso("Iniciá sesión como administrador para cancelar funciones.");
       return;
