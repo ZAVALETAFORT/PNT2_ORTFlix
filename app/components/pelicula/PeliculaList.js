@@ -3,8 +3,10 @@
 import './PeliculaList.css';
 import { useEffect, useState } from 'react';
 import PeliculaCard, { IMG_URL } from './PeliculaCard';
+import { useAuth } from '../AuthProvider';
 
 export default function PeliculaList() {
+  const { token, cargando: cargandoSesion } = useAuth();
   const [peliculas, setPeliculas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -31,11 +33,11 @@ export default function PeliculaList() {
 
   // Si hay sesión, busca el usuario y sus favoritos para marcar los botones
   useEffect(() => {
+    // Hasta que el contexto lea la sesión guardada no se sabe si hay token
+    if (cargandoSesion || !token) return;
+
     async function cargarFavoritos() {
       try {
-        const token = localStorage.getItem('token');
-        if (!token) return;
-
         const meRes = await fetch('/api/users/me', {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -55,7 +57,7 @@ export default function PeliculaList() {
       }
     }
     cargarFavoritos();
-  }, []);
+  }, [cargandoSesion, token]);
 
   async function alternarFavorito(movie) {
     setAviso('');
@@ -65,7 +67,6 @@ export default function PeliculaList() {
     }
 
     const esFavorita = favoritos.includes(movie.id);
-    const token = localStorage.getItem('token');
     try {
       let res;
       if (esFavorita) {
