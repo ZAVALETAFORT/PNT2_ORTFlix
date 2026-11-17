@@ -1,17 +1,12 @@
 "use client";
 
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useState } from "react";
 import { useFunciones } from "./FuncionesContext";
 import { validarFormulario } from "@/app/components/funcion/validarFormulario";
 import { mananaISO } from "@/app/components/funcion/fechas";
 
 const FORMATOS = ["2D", "3D", "4D"];
 const IDIOMAS = ["Subtitulada", "Castellano"];
-
-// La fecha de mañana solo se lee en el navegador (en el servidor vale ""), para evitar errores de hydration
-function suscribirseSinCambios() {
-  return () => {};
-}
 
 // Pasa una función del contrato a los valores del formulario (los inputs trabajan con strings)
 function aValores(funcion) {
@@ -34,7 +29,12 @@ export default function FuncionForm({ inicial, funcionId = null, textoBoton, onG
   const [errores, setErrores] = useState({});
   const [errorServidor, setErrorServidor] = useState("");
   const [enviando, setEnviando] = useState(false);
-  const manana = useSyncExternalStore(suscribirseSinCambios, mananaISO, () => "");
+  const [manana, setManana] = useState(""); // la fecha de mañana se lee en el navegador, para evitar errores de hydration
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setManana(mananaISO());
+  }, []);
 
   // El calendario arranca mañana; al editar una función más vieja, también deja su fecha original
   let fechaMinima = manana;
