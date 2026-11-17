@@ -1,3 +1,4 @@
+//PAgina para ver las reservas de usuario autenticado 
 "use client";
 
 import Link from "next/link";
@@ -13,9 +14,9 @@ export default function MisReservas() {
     cancelarReserva,
     cargandoReservas,
     errorReservas,
-  } = useReservas();
+  } = useReservas(); //Obtiene las reservas, funciones y operaciones del contexto
 
-  const [confirmandoId, setConfirmandoId] = useState(null);
+  const [confirmandoId, setConfirmandoId] = useState(null); //UseState guarda la reserva que estot modificando 
   const [cambiandoId, setCambiandoId] = useState(null);
   const [error, setError] = useState("");
 
@@ -31,7 +32,7 @@ export default function MisReservas() {
 
 
   // Confirma la cancelación y actualiza el listado.
-  async function confirmarCancelacion(id) {
+  async function confirmarCancelacion(id) { //llamo a cancelarReserva y actualizo el listado de reservas
     setCancelandoId(id);
     try {
       const resultado = await cancelarReserva(id);
@@ -55,13 +56,13 @@ export default function MisReservas() {
 
       {!cargandoReservas &&
         !errorReservas &&
-        reservas.map((reserva) => {
+        reservas.map((reserva) => { //Recorre las reservas y crea las tarjetas por cada reserva 
           const funcion = funciones.find((f) => f.id === reserva.funcionId);
           const sala = salas.find((s) => s.id === funcion?.salaId);
 
           if (!funcion) return null;
 
-          const finalizada =
+          const finalizada = //Calculo si ya funcion ya paso 
             reserva.estado === "confirmada" &&
             ahora !== null &&
             new Date(`${funcion.fecha}T${funcion.hora}:00`).getTime() <= ahora;

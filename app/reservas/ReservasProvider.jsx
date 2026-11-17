@@ -1,4 +1,5 @@
-"use client";
+//Aca centralizo mi contexto, manejo reservas, funciones y salas, y las operaciones de crear, cancelar y cambiar reservas.
+"use client"; 
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
@@ -39,6 +40,7 @@ export function ReservasProvider({ children }) {
 
     let activo = true;
 
+    //Consulta reservas, funciones y salas
     async function cargarDatos() {
       try {
         const resReservas = await fetch("/api/reservas", {
@@ -81,7 +83,7 @@ export function ReservasProvider({ children }) {
     };
   }, [pathname, cargandoSesion, token, cerrarSesion]);
 
-  // Guarda una reserva del usuario autenticado.
+  //Valido el array de asientos (1 al 10), que el usuario este logueado y que la funcion no haya comenzado.Mando POST a la API
   async function crearReserva(funcionId, asientos) {
     if (
       !Array.isArray(asientos) ||
@@ -129,7 +131,7 @@ export function ReservasProvider({ children }) {
     }
   }
 
-  // Envía las cancelaciones y cambios a la API.
+  // Envía las cancelaciones y cambios a la API. Mando el PUT a la API
   async function actualizarReserva(id, body) {
     if (!token) return { ok: false, message: "Necesitás iniciar sesión." };
 

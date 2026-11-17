@@ -1,3 +1,4 @@
+//construye dinámicamente el mapa de asientos según la sala
 "use client";
 
 import { useEffect, useState } from "react";
@@ -7,7 +8,14 @@ import { useReservas } from "../ReservasProvider";
 
 export default function MapaAsientos({ funcionId, reservaId }) {
   const router = useRouter();
-  const { funciones, salas, crearReserva, cambiarReserva, cargandoReservas, errorReservas } = useReservas();
+  const {
+    funciones,
+    salas,
+    crearReserva,
+    cambiarReserva,
+    cargandoReservas,
+    errorReservas,
+  } = useReservas();
   const funcion = funciones.find((f) => f.id === funcionId);
   const sala = salas.find((s) => s.id === funcion?.salaId);
 
@@ -129,10 +137,14 @@ export default function MapaAsientos({ funcionId, reservaId }) {
 
         return;
       }
-
+      //Redirige después de confirmar
       router.push("/reservas");
     } catch {
-      setOcupacionApi({ funcionId, asientos: [], error: "No se pudo actualizar la disponibilidad." });
+      setOcupacionApi({
+        funcionId,
+        asientos: [],
+        error: "No se pudo actualizar la disponibilidad.",
+      });
       setMensaje("Error de conexión con el servidor.");
     } finally {
       setEnviando(false);
@@ -143,88 +155,128 @@ export default function MapaAsientos({ funcionId, reservaId }) {
   if (errorReservas) return <p className="error">{errorReservas}</p>;
   if (!funcion || !sala) return <p>Función no encontrada.</p>;
 
-  const filas = Array.from({ length: sala.filas }, (_, i) => String.fromCharCode(65 + i));
+  //Genera filas y columnas según la capacidad de la sala, y las muestra en el mapa de asientos
+  const filas = Array.from({ length: sala.filas }, (_, i) =>
+    String.fromCharCode(65 + i),
+  );
   const columnas = Array.from({ length: sala.columnas }, (_, i) => i + 1);
 
   return (
     <div className="reserva-layout">
       <div>
-      <h1>{funcion.titulo}</h1>
-      <p>{funcion.fecha} - {funcion.hora} | {funcion.formato} | {funcion.idioma} | {sala.nombre}</p>
-      <h2>Seleccioná tus asientos</h2>
-      {cargando && <p>Cargando disponibilidad...</p>}
-      {errorOcupacion && <p className="error" role="alert">{errorOcupacion}</p>}
-      <div className="sala">
-      <div className="pantalla">PANTALLA</div>
+        <h1>{funcion.titulo}</h1>
+        <p>
+          {funcion.fecha} - {funcion.hora} | {funcion.formato} |{" "}
+          {funcion.idioma} | {sala.nombre}
+        </p>
+        <h2>Seleccioná tus asientos</h2>
+        {cargando && <p>Cargando disponibilidad...</p>}
+        {errorOcupacion && (
+          <p className="error" role="alert">
+            {errorOcupacion}
+          </p>
+        )}
+        <div className="sala">
+          <div className="pantalla">PANTALLA</div>
 
-      {filas.map((fila) => (
-        <div key={fila} className="fila">
-          <strong>{fila}</strong>
+          {filas.map(
+            (
+              fila, //Dibujo las filas
+            ) => (
+              <div key={fila} className="fila">
+                <strong>{fila}</strong>
 
-          {columnas.map((columna) => {
-            const asiento = `${fila}${columna}`;
-            const ocupado = ocupadosActuales.includes(asiento);
-            const seleccionado = seleccionados.includes(asiento);
+                {columnas.map((columna) => {
+                  //Dibujo las columnas
+                  const asiento = `${fila}${columna}`;
+                  const ocupado = ocupadosActuales.includes(asiento);
+                  const seleccionado = seleccionados.includes(asiento);
 
-            return (
-              <button
-                key={asiento}
-                type="button"
-                disabled={ocupado || cargando || !!errorOcupacion || enviando}
-                onClick={() => seleccionarAsiento(asiento)}
-                aria-label={`Asiento ${asiento}`}
-                aria-pressed={seleccionado}
-                className={ocupado ? "asiento ocupado" : seleccionado ? "asiento seleccionado" : "asiento"}
-              >
-                {columna}
-              </button>
-            );
-          })}
+                  return (
+                    //Dibujo el asiento según su estado
+                    <button
+                      key={asiento}
+                      type="button"
+                      disabled={
+                        ocupado || cargando || !!errorOcupacion || enviando
+                      } //Impide seleccionar un asiento ocupado
+                      onClick={() => seleccionarAsiento(asiento)}
+                      aria-label={`Asiento ${asiento}`}
+                      aria-pressed={seleccionado}
+                      className={
+                        ocupado
+                          ? "asiento ocupado"
+                          : seleccionado
+                            ? "asiento seleccionado"
+                            : "asiento"
+                      }
+                    >
+                      {columna}
+                    </button>
+                  );
+                })}
+              </div>
+            ),
+          )}
         </div>
-      ))}
-      </div>
 
-      <ul className="leyenda">
-        <li><span className="muestra libre" /> Libre</li>
-        <li><span className="muestra seleccionado" /> Seleccionado</li>
-        <li><span className="muestra ocupado" /> Ocupado</li>
-      </ul>
+        <ul className="leyenda">
+          <li>
+            <span className="muestra libre" /> Libre
+          </li>
+          <li>
+            <span className="muestra seleccionado" /> Seleccionado
+          </li>
+          <li>
+            <span className="muestra ocupado" /> Ocupado
+          </li>
+        </ul>
 
-      <h3>Resumen de la reserva</h3>
-      <p>Asientos: {seleccionados.join(", ") || "Ninguno"}</p>
-      <p>Cantidad: {seleccionados.length}</p>
-      <p>Total: ${funcion.precio * seleccionados.length}</p>
+        <h3>Resumen de la reserva</h3>
+        <p>Asientos: {seleccionados.join(", ") || "Ninguno"}</p>
+        <p>Cantidad: {seleccionados.length}</p>
+        <p>Total: ${funcion.precio * seleccionados.length}</p>
 
-      {seleccionados.length === 10 && <p>Máximo de 10 asientos.</p>}
+        {seleccionados.length === 10 && <p>Máximo de 10 asientos.</p>}
 
-      <button
-        type="button"
-        disabled={
-          seleccionados.length === 0 || cargando || !!errorOcupacion || enviando
-        }
-        onClick={confirmarReserva}
-        className="confirmar"
-      >
-        {reservaId ? "Confirmar cambio" : "Confirmar reserva"}
-      </button>
+        <button
+          type="button"
+          disabled={
+            seleccionados.length === 0 ||
+            cargando ||
+            !!errorOcupacion ||
+            enviando
+          }
+          onClick={confirmarReserva}
+          className="confirmar"
+        >
+          {reservaId ? "Confirmar cambio" : "Confirmar reserva"}
+        </button>
 
-      {mensaje && <p className="error">{mensaje}</p>}
+        {mensaje && <p className="error">{mensaje}</p>}
       </div>
 
       <aside className="pelicula-panel">
         {pelicula ? (
           <>
-            {pelicula.poster && <img src={pelicula.poster} alt={pelicula.titulo} />}
+            {pelicula.poster && (
+              <img src={pelicula.poster} alt={pelicula.titulo} />
+            )}
             <h2>{pelicula.titulo}</h2>
             <p className="pelicula-datos">
-              {pelicula.fechaEstreno && `Estreno: ${new Date(`${pelicula.fechaEstreno}T00:00:00`).toLocaleDateString("es-AR")} | `}
+              {pelicula.fechaEstreno &&
+                `Estreno: ${new Date(`${pelicula.fechaEstreno}T00:00:00`).toLocaleDateString("es-AR")} | `}
               Puntaje: {pelicula.puntaje ? pelicula.puntaje.toFixed(1) : "-"}
             </p>
-            <p className="pelicula-sinopsis">{pelicula.sinopsis || "Sin descripción disponible."}</p>
+            <p className="pelicula-sinopsis">
+              {pelicula.sinopsis || "Sin descripción disponible."}
+            </p>
           </>
         ) : (
           <p className="pelicula-estado">
-            {peliculaError ? "No se pudo cargar la información de la película." : "Cargando película..."}
+            {peliculaError
+              ? "No se pudo cargar la información de la película."
+              : "Cargando película..."}
           </p>
         )}
       </aside>
