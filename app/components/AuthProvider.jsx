@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 
 // Sesión del usuario compartida por toda la app (estado global).
 // Se guarda también en localStorage con las claves del contrato (README): "token", "user" y "userEmail",
@@ -33,13 +33,14 @@ export function AuthProvider({ children }) {
     setUsuario(nuevoUsuario);
   }
 
-  function cerrarSesion() {
+  // useCallback para que la función no cambie en cada render y se pueda usar dentro de un useEffect
+  const cerrarSesion = useCallback(() => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     localStorage.removeItem("userEmail");
     setToken(null);
     setUsuario(null);
-  }
+  }, []);
 
   return (
     <AuthContext.Provider value={{ usuario, token, cargando, guardarSesion, cerrarSesion }}>

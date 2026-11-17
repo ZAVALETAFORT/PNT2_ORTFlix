@@ -8,7 +8,14 @@ const ReservasContext = createContext(null);
 
 export function ReservasProvider({ children }) {
   const pathname = usePathname();
-  const { token, cargando: cargandoSesion } = useAuth();
+  const { token, cargando: cargandoSesion, cerrarSesion } = useAuth();
+
+  // Si al reservar o cancelar la API responde 401, la sesión venció (el token dura 2 horas).
+  // Se cierra la sesión y la ruta protegida (RutaProtegida) manda sola al login.
+  function sesionVencida() {
+    cerrarSesion();
+    return { ok: false, status: 401, message: "Tu sesión venció. Iniciá sesión de nuevo." };
+  }
 
   const [reservas, setReservas] = useState([]);
 
@@ -38,6 +45,13 @@ export function ReservasProvider({ children }) {
           headers: { Authorization: `Bearer ${token || ""}` },
           cache: "no-store",
         });
+
+        // La sesión venció: se cierra y la ruta protegida redirige al login
+        if (resReservas.status === 401) {
+          cerrarSesion();
+          return;
+        }
+
         const resFunciones = await fetch("/api/funciones", { cache: "no-store" });
         const resSalas = await fetch("/api/salas", { cache: "no-store" });
 
@@ -65,7 +79,7 @@ export function ReservasProvider({ children }) {
     return () => {
       activo = false;
     };
-  }, [pathname, cargandoSesion, token]);
+  }, [pathname, cargandoSesion, token, cerrarSesion]);
 
   // Guarda una reserva del usuario autenticado.
   async function crearReserva(funcionId, asientos) {
@@ -94,6 +108,8 @@ export function ReservasProvider({ children }) {
         },
         body: JSON.stringify({ funcionId, asientos }),
       });
+
+      if (res.status === 401) return sesionVencida();
 
       const datos = await res.json();
 
@@ -126,6 +142,8 @@ export function ReservasProvider({ children }) {
         },
         body: JSON.stringify(body),
       });
+      if (res.status === 401) return sesionVencida();
+
       const datos = await res.json();
       if (!res.ok) return { ok: false, status: res.status, message: datos.message || "No se pudo actualizar la reserva." };
 
