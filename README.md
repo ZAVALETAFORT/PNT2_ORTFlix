@@ -216,6 +216,8 @@ const { usuario, token, cargando, guardarSesion, cerrarSesion } = useAuth();
 
 Para proteger una página: `const autorizado = useProtegerRuta();` (exige sesión, si no manda a `/login`) o `useProtegerRuta("admin")` (exige rol admin, si no manda al home). Mientras `autorizado` sea `false` hay que mostrar "Cargando...".
 
+Para proteger **un grupo de rutas** (una carpeta entera) sin tocar cada página, se usa el componente `RutaProtegida` en el `layout.js` de la carpeta: `<RutaProtegida>{children}</RutaProtegida>` o `<RutaProtegida rol="admin">{children}</RutaProtegida>`. Hoy protegen así `app/reservas/layout.js` (exige sesión) y `app/admin/funciones/layout.js` (exige rol admin).
+
 ### Datos de prueba (mock)
 
 Mientras no esté el backend, importar los datos de `src/data/mock.js`:
@@ -466,7 +468,7 @@ El proyecto se desarrolla de forma incremental mediante GitHub Issues, ramas ind
 - [X]  Integración inicial con backend externo.
 - [X]  Estado global de sesión (`AuthProvider`).
 - [X]  Sistema de roles (Administrador y Cliente).
-- [ ]  Protección de rutas según permisos (aplicada en favoritos; falta en reservas y administrar funciones).
+- [X]  Protección de rutas según permisos (favoritos, reservas y administrar funciones).
 - [X]  Integración de autenticación con SQLite.
 
 **Cartelera y películas**
@@ -519,7 +521,7 @@ El proyecto se desarrolla de forma incremental mediante GitHub Issues, ramas ind
 | Reservas y asientos       | ✅ Integrado                         |
 | API REST propia           | ✅ Integrado                         |
 | ABM Favoritos             | ✅ Integrado                         |
-| Protección de rutas       | 🔄 En curso (aplicada en favoritos)  |
+| Protección de rutas       | ✅ Integrado                         |
 | ABM Empleados y rol Empleado | ⏳ Pendiente                      |
 
 
