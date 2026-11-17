@@ -63,7 +63,8 @@ export default function RegisterPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           username: formulario.name.trim(),
-          email: formulario.email.trim(),
+          // En minúsculas para que después el login encuentre la cuenta (el backend distingue mayúsculas)
+          email: formulario.email.trim().toLowerCase(),
           password: formulario.password,
         }),
       });
