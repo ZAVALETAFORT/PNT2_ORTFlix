@@ -68,6 +68,19 @@ export default async function PeliculaPage({ params }) {
     .all(Number(id))
     .map(funcionAJson);
 
+  const grupos = funciones.reduce((acc, f) => {
+    if (!acc[f.fecha]) acc[f.fecha] = [];
+    acc[f.fecha].push(f);
+    return acc;
+  }, {});
+  const dias = Object.keys(grupos).sort();
+
+  function etiquetaDia(fecha) {
+    const d = new Date(`${fecha}T00:00:00`);
+    const weekday = d.toLocaleDateString("es-AR", { weekday: "long" });
+    return `${weekday.charAt(0).toUpperCase() + weekday.slice(1)} ${d.getDate()}/${d.getMonth() + 1}`;
+  }
+
   return (
     <main className="contenedor">
       {pelicula.backdrop && (
@@ -118,17 +131,27 @@ export default async function PeliculaPage({ params }) {
       <section style={{ marginTop: 24 }}>
         <h2>Funciones disponibles</h2>
         {funciones.length === 0 && <p>No hay funciones disponibles para esta película.</p>}
-        <ul style={{ listStyle: "none", padding: 0 }}>
-          {funciones.map((f) => (
-            <li key={f.id} style={{ border: "1px solid #ccc", padding: 12, marginBottom: 12, borderRadius: 8 }}>
-              <p>
-                {f.fecha} - {f.hora} | {f.formato} | {f.idioma}
-              </p>
-              <p>Sala: {f.salaId} | Precio: ${f.precio}</p>
-              <Link href={`/reservas/nueva?funcionId=${f.id}`}>Reservar</Link>
-            </li>
-          ))}
-        </ul>
+        {dias.map((dia) => (
+          <div key={dia} style={{ marginBottom: 16 }}>
+            <h3>{etiquetaDia(dia)}</h3>
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+              {grupos[dia].map((f) => (
+                <Link
+                  key={f.id}
+                  href={`/reservas/nueva?funcionId=${f.id}`}
+                  style={{
+                    border: "1px solid #ccc",
+                    padding: "8px 12px",
+                    borderRadius: 8,
+                    textDecoration: "none",
+                  }}
+                >
+                  {f.hora} · {f.formato} · {f.idioma}
+                </Link>
+              ))}
+            </div>
+          </div>
+        ))}
       </section>
 
       <p style={{ marginTop: 24 }}>
