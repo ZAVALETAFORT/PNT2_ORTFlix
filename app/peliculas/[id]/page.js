@@ -18,7 +18,7 @@ export default async function PeliculaPage({ params }) {
     return (
       <main className="contenedor">
         <p>El id de la película no es válido.</p>
-        <Link href="/">Volver a cartelera</Link>
+        <Link href="/">← Volver a la cartelera</Link>
       </main>
     );
   }
@@ -57,8 +57,8 @@ export default async function PeliculaPage({ params }) {
   if (!pelicula) {
     return (
       <main className="contenedor">
-        <p>No se pudo cargar la película.</p>
-        <Link href="/">Volver a cartelera</Link>
+        <p>Película no encontrada</p>
+        <Link href="/">← Volver a la cartelera</Link>
       </main>
     );
   }
@@ -155,7 +155,7 @@ export default async function PeliculaPage({ params }) {
       </section>
 
       <p style={{ marginTop: 24 }}>
-        <Link href="/">Volver a cartelera</Link>
+        <Link href="/">← Volver a la cartelera</Link>
       </p>
     </main>
   );
