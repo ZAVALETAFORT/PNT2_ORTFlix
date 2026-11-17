@@ -41,3 +41,67 @@
     font-size: 0.85rem;
     color: var(--color-primario-oscuro);
 }
+
+a.boton {
+    display: inline-block;
+    text-decoration: none;
+}
+.acciones-fila {
+    display: inline-flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+/* Formulario de alta y edición */
+.form-funcion {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 560px;
+    padding: 20px;
+    background: var(--color-superficie);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-grande);
+}
+.campos-fila {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.campo label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-texto-suave);
+}
+.campo input,
+.campo select {
+    padding: 8px 10px;
+    border: 1px solid var(--color-borde-fuerte);
+    border-radius: var(--radio);
+    background: var(--color-superficie);
+    color: var(--color-texto);
+    font-size: 14px;
+}
+.campo input:focus,
+.campo select:focus {
+    outline: 2px solid var(--color-primario-suave);
+    border-color: var(--color-primario);
+}
+.error-campo {
+    color: var(--color-peligro);
+    font-size: 0.85rem;
+}
+.acciones-form {
+    display: flex;
+    gap: 8px;
+}
+@media (max-width: 520px) {
+    .campos-fila {
+        grid-template-columns: 1fr;
+    }
+}

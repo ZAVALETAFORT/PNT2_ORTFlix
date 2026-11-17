@@ -1,21 +1,23 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useSyncExternalStore } from "react";
+import Link from "next/link";
 import { useFunciones } from "./FuncionesContext";
-import { proximosDias } from "@/app/components/funcion/fechas";
+import { hoyISO, proximosDias } from "@/app/components/funcion/fechas";
+
+function suscribirseSinCambios() {
+  return () => {};
+}
 
 export default function FuncionesAdminPage() {
   const { funciones, setFunciones, salas, cargando, error } = useFunciones();
-  const [dias, setDias] = useState([]);
-  const [diaSeleccionado, setDiaSeleccionado] = useState("");
+  const hoy = useSyncExternalStore(suscribirseSinCambios, hoyISO, () => "");
+  const [elegido, setElegido] = useState("");
   const [confirmandoId, setConfirmandoId] = useState(null); // función que espera el "¿Seguro?"
   const [aviso, setAviso] = useState("");
 
-  useEffect(() => {
-    const proximos = proximosDias(7);
-    setDias(proximos);
-    setDiaSeleccionado(proximos[0].iso);
-  }, []);
+  const dias = hoy ? proximosDias(7) : [];
+  const diaSeleccionado = elegido || hoy; // hasta que se toque un botón, se muestra hoy
 
   const delDia = funciones
     .filter((f) => f.fecha === diaSeleccionado)
@@ -58,12 +60,16 @@ export default function FuncionesAdminPage() {
     <main className="contenedor">
       <h1 className="titulo-pagina">Funciones</h1>
 
+      <Link href="/admin/funciones/nueva" className="boton">
+        Nueva función
+      </Link>
+
       <div className="filtro-dias">
         {dias.map((d) => (
           <button
             key={d.iso}
             className={d.iso === diaSeleccionado ? "dia activo" : "dia"}
-            onClick={() => setDiaSeleccionado(d.iso)}
+            onClick={() => setElegido(d.iso)}
           >
             {d.etiqueta}
           </button>
@@ -110,9 +116,14 @@ export default function FuncionesAdminPage() {
                       <button className="boton boton-secundario" onClick={() => setConfirmandoId(null)}>No</button>
                     </span>
                   ) : (
-                    <button className="boton boton-peligro" onClick={() => setConfirmandoId(f.id)}>
-                      Cancelar función
-                    </button>
+                    <span className="acciones-fila">
+                      <Link href={`/admin/funciones/${f.id}/editar`} className="boton boton-secundario">
+                        Editar
+                      </Link>
+                      <button className="boton boton-peligro" onClick={() => setConfirmandoId(f.id)}>
+                        Eliminar
+                      </button>
+                    </span>
                   )}
                 </td>
               </tr>

@@ -8,7 +8,13 @@ export function aISO(fecha) {
   export function hoyISO() {
     return aISO(new Date());
   }
-  
+
+  export function mananaISO() {
+    const fecha = new Date();
+    fecha.setDate(fecha.getDate() + 1);
+    return aISO(fecha);
+  }
+
   export function proximosDias(cantidad) {
     const dias = [];
     for (let i = 0; i < cantidad; i++) {
