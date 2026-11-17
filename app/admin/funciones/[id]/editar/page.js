@@ -12,12 +12,14 @@ export default function EditarFuncionPage() {
   const { funciones, setFunciones, cargando, error } = useFunciones();
 
   const funcion = funciones.find((f) => f.id === Number(id));
+  // La función no existe hasta que carga la lista: el id se saca una sola vez y de forma segura
+  const funcionId = funcion?.id;
 
   async function guardar(datos) {
-    const resultado = await enviarFuncion(datos, funcion.id);
+    const resultado = await enviarFuncion(datos, funcionId);
     if (resultado.error) return resultado.error;
 
-    setFunciones((prev) => prev.map((f) => (f.id === funcion.id ? resultado.funcion : f)));
+    setFunciones((prev) => prev.map((f) => (f.id === funcionId ? resultado.funcion : f)));
     router.push("/admin/funciones");
     return null;
   }
